@@ -4,13 +4,14 @@ import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import HeroCanvas from "./HeroCanvas";
 import { useHeroScroll } from "./HeroScrollContext";
-import VerticalDock from "./VerticalDock";
 import FeaturedCreationCard from "./FeaturedCreationCard";
 import StatsCard from "./StatsCard";
 import QuickPromptCard from "./QuickPromptCard";
 import ShowreelModal from "./ShowreelModal";
 import PromptModal from "./PromptModal";
 import ServicesShowcase from "./ServicesShowcase";
+import ExpertisesHeroSlide from "./ExpertisesHeroSlide";
+import VerticalDock from "./VerticalDock";
 import MobileBottomNav from "./MobileBottomNav";
 import { IconSearch, IconArrowRight, IconPlay, IconClose } from "./Icons";
 
@@ -25,6 +26,8 @@ function HeroContent() {
   const [isShowreelOpen, setIsShowreelOpen] = useState(false);
   const [selectedPromptItem, setSelectedPromptItem] = useState<any>(null);
   const [activeNav, setActiveNav] = useState("expertises");
+  const [activeNavTab, setActiveNavTab] = useState("services");
+  const [isSlideOpen, setIsSlideOpen] = useState(false);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
@@ -62,9 +65,14 @@ function HeroContent() {
 
   const handleNavClick = (id: string, targetId: string) => {
     setActiveNav(id);
-    const el = document.getElementById(targetId);
-    if (el) {
-      el.scrollIntoView({ behavior: "smooth" });
+    setActiveNavTab(targetId);
+    if (!targetId || targetId === "home") {
+      setIsSlideOpen(false);
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    } else {
+      setIsSlideOpen(true);
+      const targetScroll = window.innerHeight * 3.2;
+      window.scrollTo({ top: targetScroll, behavior: "smooth" });
     }
   };
 
@@ -75,16 +83,11 @@ function HeroContent() {
     showToast("Connexion au formulaire de cadrage...");
     setTimeout(() => {
       setIsCtaAnimating(false);
-      const contactSection = document.getElementById("contact");
-      if (contactSection) {
-        contactSection.scrollIntoView({ behavior: "smooth" });
-      } else {
-        const input = document.getElementById("project-input-hero");
-        if (input) {
-          input.focus();
-          input.scrollIntoView({ behavior: "smooth", block: "center" });
-        }
-      }
+      setActiveNav("contact");
+      setActiveNavTab("contact");
+      setIsSlideOpen(true);
+      const targetScroll = window.innerHeight * 3.2;
+      window.scrollTo({ top: targetScroll, behavior: "smooth" });
     }, 380);
   };
 
@@ -231,12 +234,27 @@ function HeroContent() {
         </div>
       </header>
 
-      {/* Navigation Latérale (Vertical Dock) - Vient de la GAUCHE */}
+      {/* Navigation Latérale (Vertical Dock) - FIXE sur la GAUCHE */}
       <div
-        className={`hidden lg:block absolute left-3 sm:left-6 lg:left-8 xl:left-12 top-[138px] xl:top-[150px] bottom-[127px] z-30 pointer-events-auto transition-all duration-700 delay-150 ease-out ${isIntroReady ? "translate-x-0 opacity-100" : "-translate-x-16 opacity-0 pointer-events-none"
-          }`}
+        className={`hidden lg:block absolute left-3 sm:left-6 lg:left-8 xl:left-12 top-[100px] xl:top-[110px] bottom-[30px] z-50 pointer-events-auto transition-all duration-700 delay-150 ease-out ${
+          isIntroReady ? "translate-x-0 opacity-100" : "-translate-x-16 opacity-0 pointer-events-none"
+        }`}
       >
-        <VerticalDock />
+        <VerticalDock
+          activeSectionId={activeNavTab}
+          onSelectSection={(secId) => {
+            setActiveNav(secId === "services" ? "expertises" : secId);
+            setActiveNavTab(secId);
+            if (secId === "home") {
+              setIsSlideOpen(false);
+              window.scrollTo({ top: 0, behavior: "smooth" });
+            } else {
+              setIsSlideOpen(true);
+              const targetScroll = window.innerHeight * 3.2;
+              window.scrollTo({ top: targetScroll, behavior: "smooth" });
+            }
+          }}
+        />
       </div>
 
       {/* ======================================================== */}
@@ -388,6 +406,29 @@ function HeroContent() {
         progress={scrollProgress}
         onRequestQuote={(serviceTitle) => {
           showToast(`Demande de devis pour : "${serviceTitle}"`);
+        }}
+      />
+
+      {/* ======================================================== */}
+      {/* 5. SLIDE BLANC AVEC TITRE NOIR TURQUOISE "NOS EXPERTISES" */}
+      {/* Menu au survol & Lazy Loading de tout le reste du site     */}
+      {/* ======================================================== */}
+      <ExpertisesHeroSlide
+        progress={scrollProgress}
+        isOpen={isSlideOpen}
+        onRequestQuote={(serviceTitle) => {
+          showToast(`Demande de devis pour : "${serviceTitle}"`);
+        }}
+        onBackToHero={() => {
+          setIsSlideOpen(false);
+          setActiveNav("home");
+          setActiveNavTab("home");
+          window.scrollTo({ top: window.innerHeight * 1.5, behavior: "smooth" });
+        }}
+        activeNavTab={activeNavTab}
+        onSelectNavTab={(tabId) => {
+          setActiveNavTab(tabId);
+          setActiveNav(tabId);
         }}
       />
 

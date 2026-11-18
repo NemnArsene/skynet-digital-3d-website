@@ -163,9 +163,14 @@ export default function ServicesShowcase({
   const [hoveredServiceId, setHoveredServiceId] = useState<number | null>(null);
   const [mobileIndex, setMobileIndex] = useState<number>(0);
 
-  // Fade-in smoothly as camera traverses doorway (between progress 0.28 and 0.40)
-  const isVisible = progress >= 0.25;
-  const opacity = Math.max(0, Math.min(1, (progress - 0.25) / 0.12));
+  // Phase 2: Show gallery pins between 0.22 and 0.66 throughout the 3D gallery walk
+  const isVisible = progress >= 0.22 && progress <= 0.66;
+  const opacity =
+    progress < 0.32
+      ? Math.max(0, Math.min(1, (progress - 0.22) / 0.10))
+      : progress > 0.58
+      ? Math.max(0, Math.min(1, 1 - (progress - 0.58) / 0.08))
+      : 1;
 
   if (!isVisible || opacity <= 0) return null;
 

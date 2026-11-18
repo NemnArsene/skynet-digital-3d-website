@@ -20,17 +20,12 @@ interface SectionTitleSlideProps {
 }
 
 /**
- * Cinematic full-screen "slide" title card that appears between sections.
- *
- * Architecture:
- *  - A 200vh tall scroll container gives the scroll room for the animation.
- *  - Inside, a `sticky top-0 h-screen` div stays pinned while the user scrolls.
- *  - A `localProgress` (0→1) is computed from how far the user has scrolled
- *    through the 200vh container.
- *  - 0–0.45: Title slides IN (opacity 0→1, translateY 60px→0).
- *  - 0.45–0.55: Title stays fully visible.
- *  - 0.55–1: Title slides OUT (opacity 1→0, translateY 0→-60px, scale 0.96).
- *  - Fully reversible on scroll back up.
+ * Slide de présentation cinématique pleine largeur (100vh).
+ * Fonctionne comme une diapositive de diaporama :
+ * - Reste verrouillé en plein écran au début du défilement
+ * - S'estompe et glisse vers le haut ("disparaît comme un slide")
+ * - Laisse ensuite place aux éléments interactifs de la section
+ * - 100% réversible au défilement en arrière vers le Hero
  */
 export default function SectionTitleSlide({
   sectionNum,
@@ -42,7 +37,7 @@ export default function SectionTitleSlide({
   glowPosition = "left",
 }: SectionTitleSlideProps) {
   const containerRef = useRef<HTMLDivElement>(null);
-  const [localProgress, setLocalProgress] = useState(0);
+  const [slideProgress, setSlideProgress] = useState(0);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -50,16 +45,12 @@ export default function SectionTitleSlide({
       if (!el) return;
 
       const rect = el.getBoundingClientRect();
-      const scrollableDistance = rect.height - window.innerHeight;
-
-      if (scrollableDistance <= 0) {
-        setLocalProgress(0);
-        return;
-      }
+      const scrollableDist = rect.height - window.innerHeight;
+      if (scrollableDist <= 0) return;
 
       const scrolled = -rect.top;
-      const progress = Math.max(0, Math.min(1, scrolled / scrollableDistance));
-      setLocalProgress(progress);
+      const p = Math.max(0, Math.min(1, scrolled / scrollableDist));
+      setSlideProgress(p);
     };
 
     window.addEventListener("scroll", handleScroll, { passive: true });
@@ -68,50 +59,40 @@ export default function SectionTitleSlide({
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  // ── Compute transforms from localProgress ──
-  // Phase 1: Entrance (0 → 0.4) — fade in + slide up
-  // Phase 2: Hold (0.4 → 0.6) — fully visible
-  // Phase 3: Exit (0.6 → 1.0) — fade out + slide up + slight scale down
+  // 0.0 à 0.35 : La diapositive reste pleinement visible en plein écran
+  // 0.35 à 0.85 : La diapositive s'efface et glisse vers le haut pour révéler les éléments de la section
+  let opacity = 1;
+  let translateY = 0;
+  let scale = 1;
 
-  let opacity: number;
-  let translateY: number;
-  let scale: number;
-
-  if (localProgress <= 0.4) {
-    // Entrance
-    const t = localProgress / 0.4; // 0→1
-    opacity = t;
-    translateY = 60 * (1 - t); // 60px → 0px
-    scale = 0.97 + 0.03 * t; // 0.97 → 1
-  } else if (localProgress <= 0.6) {
-    // Hold
-    opacity = 1;
-    translateY = 0;
-    scale = 1;
-  } else {
-    // Exit
-    const t = (localProgress - 0.6) / 0.4; // 0→1
-    opacity = 1 - t;
-    translateY = -60 * t; // 0 → -60px
-    scale = 1 - 0.04 * t; // 1 → 0.96
+  if (slideProgress > 0.35) {
+    const t = Math.min(1, (slideProgress - 0.35) / 0.50);
+    opacity = Math.max(0, 1 - t);
+    translateY = -70 * t;
+    scale = 1 - 0.03 * t;
   }
 
   return (
     <div
       ref={containerRef}
       className="relative w-full"
-      style={{ height: "200vh" }}
+      style={{ height: "150vh" }}
     >
-      {/* Sticky viewport-height slide */}
-      <div className="sticky top-0 w-full h-screen flex flex-col justify-center items-center text-center overflow-hidden bg-gradient-to-b from-[#f8fafc] via-white to-white">
-        
+      {/* Diapositive collante plein écran (100vh) */}
+      <div
+        className="sticky top-0 w-full h-screen h-[100dvh] flex flex-col justify-center items-center text-center overflow-hidden px-4 sm:px-6 lg:px-12 py-16 sm:py-24 border-b border-slate-200/80 bg-gradient-to-b from-[#f8fafc] via-white to-white select-none isolate"
+        style={{
+          opacity,
+          transform: `translate3d(0, ${translateY}px, 0) scale(${scale})`,
+          pointerEvents: opacity <= 0.05 ? "none" : "auto",
+        }}
+      >
         {/* Massive Watermark Parallax Background */}
         <span
           aria-hidden="true"
-          className="pointer-events-none select-none absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 font-heading font-black text-[18vw] text-slate-900/[0.03] tracking-tighter whitespace-nowrap"
+          className="pointer-events-none select-none absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 font-heading font-black text-[18vw] text-slate-900/[0.03] tracking-tighter whitespace-nowrap will-change-transform -z-0"
           style={{
-            opacity: opacity * 0.5,
-            transform: `translate(-50%, -50%) scale(${0.9 + 0.1 * (localProgress <= 0.5 ? localProgress / 0.5 : 1 - (localProgress - 0.5) / 0.5)})`,
+            transform: `translate(-50%, -50%) scale(${0.96 + slideProgress * 0.08})`,
           }}
         >
           {watermark}
@@ -125,21 +106,15 @@ export default function SectionTitleSlide({
               : "top-10 right-1/4 bg-gradient-to-bl"
           }`}
           style={{
-            backgroundImage: glowPosition === "left"
-              ? `linear-gradient(to top right, ${accentColor}0d, #78377e0d, transparent)`
-              : `linear-gradient(to bottom left, #78377e0d, #3341ab0d, transparent)`,
+            backgroundImage:
+              glowPosition === "left"
+                ? `linear-gradient(to top right, ${accentColor}12, #78377e0d, transparent)`
+                : `linear-gradient(to bottom left, #78377e12, #3341ab0d, transparent)`,
           }}
         />
 
         {/* Animated Content */}
-        <div
-          className="relative z-10 max-w-4xl mx-auto flex flex-col items-center px-4 sm:px-6 lg:px-12 will-change-transform"
-          style={{
-            opacity,
-            transform: `translateY(${translateY}px) scale(${scale})`,
-            transition: "none", // Pure scroll-driven, no CSS transitions
-          }}
-        >
+        <div className="relative z-10 max-w-4xl mx-auto flex flex-col items-center px-4">
           {/* Badge Cinématique */}
           <div className="inline-flex items-center gap-2.5 px-4 py-1.5 rounded-full bg-slate-900/5 border border-slate-900/10 backdrop-blur-md mb-6 shadow-sm">
             <span
@@ -161,8 +136,8 @@ export default function SectionTitleSlide({
           </p>
 
           {/* Prompt de défilement cinématique */}
-          <div className="inline-flex items-center gap-2 text-xs font-mono tracking-widest uppercase text-[#64748b] bg-slate-100/80 px-4 py-2 rounded-full border border-slate-200">
-            <span>Continuez pour découvrir</span>
+          <div className="inline-flex items-center gap-2 text-xs font-mono tracking-widest uppercase text-[#64748b] bg-slate-100/90 px-4 py-2 rounded-full border border-slate-200 shadow-sm">
+            <span>Défilez pour découvrir cette section</span>
             <span className="animate-bounce">↓</span>
           </div>
         </div>

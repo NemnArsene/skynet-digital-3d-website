@@ -153,9 +153,9 @@ export default function HeroCanvas({ frames, children }: HeroCanvasProps) {
       Promise.allSettled(batchPromises).then(() => {
         if (isCancelled) return;
 
-        // Phase 3: Background chunked preloading of remaining frames
+        // Phase 3: Rapid background preloading of remaining frames
         let currentIndex = initialBatch;
-        const chunkSize = 12;
+        const chunkSize = 20;
 
         const loadNextChunk = () => {
           if (isCancelled || currentIndex >= totalFrames) return;
@@ -170,11 +170,7 @@ export default function HeroCanvas({ frames, children }: HeroCanvasProps) {
 
           Promise.allSettled(chunkPromises).then(() => {
             if (!isCancelled && currentIndex < totalFrames) {
-              if (typeof window !== "undefined" && "requestIdleCallback" in window) {
-                (window as any).requestIdleCallback(() => loadNextChunk());
-              } else {
-                setTimeout(loadNextChunk, 20);
-              }
+              setTimeout(loadNextChunk, 8);
             }
           });
         };
@@ -236,6 +232,14 @@ export default function HeroCanvas({ frames, children }: HeroCanvasProps) {
 
       const newTarget = progress * (totalFrames - 1);
       targetFrameRef.current = newTarget;
+
+      // On-demand priority preloading for immediate frames around current scroll position
+      const targetIdx = Math.round(newTarget);
+      loadImage(targetIdx);
+      for (let i = 1; i <= 6; i++) {
+        if (targetIdx + i < totalFrames) loadImage(targetIdx + i);
+        if (targetIdx - i >= 0) loadImage(targetIdx - i);
+      }
     };
 
     window.addEventListener("scroll", handleScroll, { passive: true });
@@ -298,11 +302,11 @@ export default function HeroCanvas({ frames, children }: HeroCanvasProps) {
       <div
         ref={containerRef}
         className="relative w-full"
-        style={{ height: "400vh" }} // 400vh tall scroll area as required
+        style={{ height: "450vh" }} // 450vh for ultra-smooth 3-phase hero scroll
       >
-        {/* Pinned Sticky Viewport Window */}
-        <div className="sticky top-0 w-full h-screen h-[100dvh] overflow-hidden flex flex-col justify-between isolate">
-          
+        {/* Pinned Fixed Viewport Window - Always stays locked to screen with fixed inset-0 */}
+        <div className="fixed inset-0 w-full h-screen h-[100dvh] overflow-hidden flex flex-col justify-between isolate z-10">
+
           {/* Full-screen HTML5 Canvas Background */}
           <canvas
             ref={canvasRef}
