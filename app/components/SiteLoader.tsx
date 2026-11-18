@@ -17,6 +17,9 @@ export default function SiteLoader({ onLoaded }: SiteLoaderProps) {
       setProgress(100);
       setTimeout(() => {
         setIsDone(true);
+        if (typeof window !== "undefined") {
+          window.dispatchEvent(new CustomEvent("skynet:loaded"));
+        }
         if (onLoaded) onLoaded();
       }, 500);
     }, 4500);
@@ -39,6 +42,9 @@ export default function SiteLoader({ onLoaded }: SiteLoaderProps) {
     setProgress(100);
     setTimeout(() => {
       setIsDone(true);
+      if (typeof window !== "undefined") {
+        window.dispatchEvent(new CustomEvent("skynet:loaded"));
+      }
       if (onLoaded) onLoaded();
     }, 450);
   };
@@ -46,6 +52,9 @@ export default function SiteLoader({ onLoaded }: SiteLoaderProps) {
   const handleSkip = () => {
     setProgress(100);
     setIsDone(true);
+    if (typeof window !== "undefined") {
+      window.dispatchEvent(new CustomEvent("skynet:loaded"));
+    }
     if (onLoaded) onLoaded();
   };
 

@@ -161,12 +161,15 @@ export default function ServicesShowcase({
 }: ServicesShowcaseProps) {
   const [activeService, setActiveService] = useState<ServiceItem | null>(null);
   const [hoveredServiceId, setHoveredServiceId] = useState<number | null>(null);
+  const [mobileIndex, setMobileIndex] = useState<number>(0);
 
   // Fade-in smoothly as camera traverses doorway (between progress 0.28 and 0.40)
   const isVisible = progress >= 0.25;
   const opacity = Math.max(0, Math.min(1, (progress - 0.25) / 0.12));
 
   if (!isVisible || opacity <= 0) return null;
+
+  const currentMobileService = SERVICES_DATA[mobileIndex] || SERVICES_DATA[0];
 
   const renderIcon = (name: string, className = "w-3.5 h-3.5") => {
     switch (name) {
@@ -204,6 +207,86 @@ export default function ServicesShowcase({
           <span className="text-[10px] font-mono uppercase tracking-widest px-2 py-0.5 rounded-full bg-white/10 text-white/70">
             7 PÔLES D&apos;EXCELLENCE
           </span>
+        </div>
+      </div>
+
+      {/* Mobile Spotlight Card (Rend les services très visibles sur smartphone dans le 2ème frame) */}
+      <div className="w-full md:hidden my-auto pointer-events-auto px-2 animate-in fade-in slide-in-from-bottom-4 duration-300">
+        <div className="relative w-full rounded-3xl bg-[#0f121d]/95 backdrop-blur-2xl border border-white/20 p-4 text-white shadow-[0_20px_50px_rgba(0,0,0,0.85)] flex flex-col gap-3">
+          {/* Ambient glow */}
+          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-3/4 h-16 bg-gradient-to-b from-[#b13257]/30 via-[#78377e]/15 to-transparent blur-xl pointer-events-none rounded-t-3xl" />
+
+          <div className="relative flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <span className="font-mono text-[10px] font-bold px-2 py-0.5 rounded-full bg-gradient-to-r from-[#b13257] to-[#78377e] text-white">
+                PÔLE {currentMobileService.number} / 07
+              </span>
+              <span className="text-[10px] font-mono uppercase tracking-wider text-white/60">
+                {currentMobileService.category}
+              </span>
+            </div>
+
+            {/* Prev / Next controls */}
+            <div className="flex items-center gap-1">
+              <button
+                type="button"
+                onClick={() => setMobileIndex((prev) => (prev > 0 ? prev - 1 : SERVICES_DATA.length - 1))}
+                className="w-7 h-7 rounded-full bg-white/10 hover:bg-white/20 active:scale-95 flex items-center justify-center text-white text-xs cursor-pointer"
+                aria-label="Service précédent"
+              >
+                ‹
+              </button>
+              <button
+                type="button"
+                onClick={() => setMobileIndex((prev) => (prev < SERVICES_DATA.length - 1 ? prev + 1 : 0))}
+                className="w-7 h-7 rounded-full bg-white/10 hover:bg-white/20 active:scale-95 flex items-center justify-center text-white text-xs cursor-pointer"
+                aria-label="Service suivant"
+              >
+                ›
+              </button>
+            </div>
+          </div>
+
+          <div className="flex items-start gap-3">
+            <div className="w-9 h-9 rounded-2xl bg-white/10 border border-white/15 flex items-center justify-center shrink-0 text-white">
+              {renderIcon(currentMobileService.iconName, "w-4 h-4")}
+            </div>
+            <div className="flex flex-col">
+              <h3 className="font-heading text-sm font-bold text-white leading-tight">
+                {currentMobileService.title}
+              </h3>
+              <p className="text-[11px] text-white/75 mt-0.5 line-clamp-2 leading-relaxed">
+                {currentMobileService.description}
+              </p>
+            </div>
+          </div>
+
+          {/* Quick deliverables preview */}
+          <div className="flex flex-wrap gap-1.5 pt-0.5">
+            {currentMobileService.features.slice(0, 2).map((feat, idx) => (
+              <span key={idx} className="text-[9px] px-2 py-0.5 rounded-lg bg-white/[0.06] border border-white/10 text-white/80">
+                ✓ {feat}
+              </span>
+            ))}
+          </div>
+
+          {/* Buttons: Explorer + Devis */}
+          <div className="flex items-center gap-2 pt-0.5">
+            <button
+              type="button"
+              onClick={() => setActiveService(currentMobileService)}
+              className="flex-1 py-1.5 px-3 rounded-xl bg-white/10 hover:bg-white/20 border border-white/15 text-xs font-semibold text-center text-white transition-colors cursor-pointer"
+            >
+              Détails &amp; Livrables
+            </button>
+            <button
+              type="button"
+              onClick={() => onRequestQuote(currentMobileService.title)}
+              className="py-1.5 px-3.5 rounded-xl bg-gradient-to-r from-[#ff6b35] via-[#b13257] to-[#78377e] text-xs font-semibold text-white shadow-md cursor-pointer"
+            >
+              Devis
+            </button>
+          </div>
         </div>
       </div>
 
@@ -273,12 +356,15 @@ export default function ServicesShowcase({
           
           {/* Services Horizontal Scroll / Tabs */}
           <div className="flex items-center gap-1.5 overflow-x-auto w-full md:w-auto py-1 px-1 scrollbar-none">
-            {SERVICES_DATA.map((service) => {
-              const isSelected = hoveredServiceId === service.id;
+            {SERVICES_DATA.map((service, idx) => {
+              const isSelected = hoveredServiceId === service.id || mobileIndex === idx;
               return (
                 <button
                   key={service.id}
-                  onClick={() => setActiveService(service)}
+                  onClick={() => {
+                    setMobileIndex(idx);
+                    setActiveService(service);
+                  }}
                   onMouseEnter={() => setHoveredServiceId(service.id)}
                   onMouseLeave={() => setHoveredServiceId(null)}
                   className={`group shrink-0 inline-flex items-center gap-2 px-3 sm:px-4 py-2 rounded-2xl text-xs font-medium transition-all duration-300 ${

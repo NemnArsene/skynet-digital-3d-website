@@ -123,12 +123,72 @@ h1, h2, h3, h4, .font-heading {
   50% { transform: translateY(-6px); }
 }
 
+/* Slide in animations like slides */
+@keyframes slideUpFade {
+  0% {
+    opacity: 0;
+    transform: translateY(32px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideInLeft {
+  0% {
+    opacity: 0;
+    transform: translateX(-32px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideInRight {
+  0% {
+    opacity: 0;
+    transform: translateX(32px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.animate-slide-up {
+  animation: slideUpFade 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.animate-slide-left {
+  animation: slideInLeft 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.animate-slide-right {
+  animation: slideInRight 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
 .animate-pulse-subtle {
   animation: pulseSubtle 8s ease-in-out infinite;
 }
 
 .animate-float-gentle {
   animation: floatGentle 5s ease-in-out infinite;
+}
+
+/* Suppress all Next.js developer overlay buttons / floating indicators */
+nextjs-portal,
+[data-nextjs-toast],
+[data-nextjs-dialog-overlay],
+#__next-build-watcher,
+[data-nextjs-dev-tools-indicator],
+button[aria-label="Open Next.js Dev Tools"],
+button[aria-label*="Next.js"] {
+  display: none !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+  opacity: 0 !important;
 }
 
 /* Selection */

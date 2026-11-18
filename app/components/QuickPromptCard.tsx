@@ -24,7 +24,7 @@ export default function QuickPromptCard({ onGenerate }: QuickPromptCardProps) {
   };
 
   return (
-    <div className="relative bg-[#0d0a17]/95 border border-white/15 rounded-[24px] p-3 sm:p-3.5 shadow-[0_20px_50px_rgba(0,0,0,0.4)] backdrop-blur-2xl flex flex-col justify-between w-full transition-all hover:border-white/25">
+    <div className="relative bg-white/90 backdrop-blur-2xl border border-[#0f172a]/10 rounded-[24px] p-3 sm:p-3.5 shadow-[0_12px_35px_rgba(0,0,0,0.1)] hover:shadow-[0_18px_45px_rgba(0,0,0,0.15)] flex flex-col justify-between w-full transition-all duration-300">
       {/* Ligne du haut : Logo officiel + Bouton d'action */}
       <div className="flex items-center justify-between mb-2">
         <div className="relative w-9 h-9 sm:w-10 sm:h-10 rounded-full p-[2px] bg-gradient-to-r from-[#b13257] via-[#78377e] to-[#3341ab] shadow-[0_0_15px_rgba(177,50,87,0.35)]">
@@ -45,7 +45,7 @@ export default function QuickPromptCard({ onGenerate }: QuickPromptCardProps) {
         <button
           onClick={() => onGenerate(projectText || "Projet 3D & Web")}
           title="Démarrer un projet avec Skynet"
-          className="w-8 h-8 rounded-full bg-white/10 hover:bg-white text-white hover:text-black flex items-center justify-center transition-all duration-300 hover:rotate-12 shadow-sm"
+          className="w-8 h-8 rounded-full bg-[#0f172a]/5 hover:bg-[#0f172a] text-[#0f172a] hover:text-white flex items-center justify-center transition-all duration-300 hover:rotate-12 shadow-sm"
         >
           <IconArrowUpRight className="w-3.5 h-3.5" />
         </button>
@@ -53,10 +53,10 @@ export default function QuickPromptCard({ onGenerate }: QuickPromptCardProps) {
 
       {/* Titre & Slogan officiel compact */}
       <div className="mb-2">
-        <h3 className="text-xs sm:text-sm font-semibold text-white tracking-tight leading-tight font-heading truncate">
+        <h3 className="text-xs sm:text-sm font-bold text-[#0f172a] tracking-tight leading-tight font-heading truncate">
           Donnez vie à vos idées.
         </h3>
-        <p className="text-[10px] sm:text-[11px] text-white/65 mt-0.5 leading-snug line-clamp-1">
+        <p className="text-[10px] sm:text-[11px] text-[#64748b] mt-0.5 leading-snug line-clamp-1">
           Discutons de vos objectifs dès aujourd’hui.
         </p>
       </div>
@@ -69,7 +69,7 @@ export default function QuickPromptCard({ onGenerate }: QuickPromptCardProps) {
           value={projectText}
           onChange={(e) => setProjectText(e.target.value)}
           placeholder="Votre projet..."
-          className="w-full bg-white/[0.07] border border-white/12 rounded-full py-2 pl-3 pr-8 text-[11px] text-white placeholder-white/40 focus:outline-none focus:border-[#b13257] focus:ring-1 focus:ring-[#b13257] transition-all"
+          className="w-full bg-slate-100/90 border border-slate-200/80 rounded-full py-2 pl-3 pr-8 text-[11px] text-[#0f172a] placeholder-[#94a3b8] focus:outline-none focus:border-[#b13257] focus:ring-1 focus:ring-[#b13257] transition-all"
         />
         <button
           type="submit"

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import HeroCanvas from "./HeroCanvas";
 import { useHeroScroll } from "./HeroScrollContext";
@@ -21,6 +21,7 @@ interface HeroSectionProps {
 function HeroContent() {
   const { scrollProgress } = useHeroScroll();
 
+  const [isIntroReady, setIsIntroReady] = useState(false);
   const [isShowreelOpen, setIsShowreelOpen] = useState(false);
   const [selectedPromptItem, setSelectedPromptItem] = useState<any>(null);
   const [activeNav, setActiveNav] = useState("expertises");
@@ -29,30 +30,60 @@ function HeroContent() {
   const [searchQuery, setSearchQuery] = useState("");
   const [isCtaAnimating, setIsCtaAnimating] = useState(false);
 
+  useEffect(() => {
+    const handleLoaded = () => {
+      setIsIntroReady(true);
+    };
+    window.addEventListener("skynet:loaded", handleLoaded);
+
+    // Timeout de secours au cas où le loader a été écourté ou préchargé
+    const timer = setTimeout(() => {
+      setIsIntroReady(true);
+    }, 4600);
+
+    return () => {
+      window.removeEventListener("skynet:loaded", handleLoaded);
+      clearTimeout(timer);
+    };
+  }, []);
+
   const showToast = (msg: string) => {
     setToastMessage(msg);
     setTimeout(() => setToastMessage(null), 3500);
   };
 
   const navLinks = [
-    { id: "expertises", label: "Expertises" },
-    { id: "realisations", label: "Réalisations" },
-    { id: "formations", label: "Formations" },
-    { id: "apropos", label: "À propos" },
-    { id: "contact", label: "Contact" },
+    { id: "expertises", label: "Expertises", targetId: "services" },
+    { id: "realisations", label: "Réalisations", targetId: "realisations" },
+    { id: "formations", label: "Formations IA", targetId: "formations" },
+    { id: "agence", label: "L'Agence", targetId: "agence" },
+    { id: "contact", label: "Contact & Devis", targetId: "contact" },
   ];
+
+  const handleNavClick = (id: string, targetId: string) => {
+    setActiveNav(id);
+    const el = document.getElementById(targetId);
+    if (el) {
+      el.scrollIntoView({ behavior: "smooth" });
+    }
+  };
 
   // CTA Click handler with smooth color-slide animation before navigation
   const triggerCtaAction = (e?: React.MouseEvent) => {
     if (e) e.preventDefault();
     setIsCtaAnimating(true);
-    showToast("Connexion à l'espace projet Skynet...");
+    showToast("Connexion au formulaire de cadrage...");
     setTimeout(() => {
       setIsCtaAnimating(false);
-      const input = document.getElementById("project-input-hero");
-      if (input) {
-        input.focus();
-        input.scrollIntoView({ behavior: "smooth", block: "center" });
+      const contactSection = document.getElementById("contact");
+      if (contactSection) {
+        contactSection.scrollIntoView({ behavior: "smooth" });
+      } else {
+        const input = document.getElementById("project-input-hero");
+        if (input) {
+          input.focus();
+          input.scrollIntoView({ behavior: "smooth", block: "center" });
+        }
       }
     }, 380);
   };
@@ -83,7 +114,10 @@ function HeroContent() {
       {/* ======================================================== */}
       {/* 1. TOP NAVIGATION BAR (High Contrast, Refined Glass)     */}
       {/* ======================================================== */}
-      <header className="w-full flex items-center justify-between gap-3 z-40 pb-3 sm:pb-4">
+      <header
+        className={`w-full flex items-center justify-between gap-3 z-40 pb-3 sm:pb-4 transition-all duration-700 ease-out ${isIntroReady ? "translate-y-0 opacity-100" : "-translate-y-12 opacity-0 pointer-events-none"
+          }`}
+      >
         {/* Left: Brand Identity with official 3D S Ribbon Logo */}
         <div className="flex items-center gap-2.5 sm:gap-3 shrink-0">
           <div className="relative w-9 h-9 sm:w-11 sm:h-11 rounded-2xl bg-gradient-to-tr from-[#b13257] via-[#78377e] to-[#3341ab] p-[2px] shadow-[0_0_20px_rgba(177,50,87,0.35)]">
@@ -122,12 +156,11 @@ function HeroContent() {
             return (
               <button
                 key={link.id}
-                onClick={() => setActiveNav(link.id)}
-                className={`px-3.5 lg:px-5 py-1.5 rounded-full text-xs sm:text-sm font-semibold transition-all duration-300 ${
-                  isActive
+                onClick={() => handleNavClick(link.id, link.targetId)}
+                className={`px-3.5 lg:px-5 py-1.5 rounded-full text-xs sm:text-sm font-semibold transition-all duration-300 ${isActive
                     ? "bg-[#0f172a] text-white shadow-sm"
                     : "text-[#334155] hover:text-[#0f172a] hover:bg-[#0f172a]/5"
-                }`}
+                  }`}
               >
                 {link.label}
               </button>
@@ -182,11 +215,10 @@ function HeroContent() {
           >
             {/* Calque de glissement de couleur officiel de gauche vers la droite */}
             <span
-              className={`absolute inset-0 bg-gradient-to-r from-[#ff6b35] via-[#b13257] to-[#78377e] transition-transform duration-400 ease-out pointer-events-none ${
-                isCtaAnimating
+              className={`absolute inset-0 bg-gradient-to-r from-[#ff6b35] via-[#b13257] to-[#78377e] transition-transform duration-400 ease-out pointer-events-none ${isCtaAnimating
                   ? "translate-x-0 opacity-100"
                   : "-translate-x-full opacity-0 group-hover:translate-x-0 group-hover:opacity-100"
-              }`}
+                }`}
             />
 
             <span className="relative z-10 tracking-tight whitespace-nowrap">
@@ -199,8 +231,11 @@ function HeroContent() {
         </div>
       </header>
 
-      {/* Navigation Latérale (Vertical Dock) - Commence au niveau du titre Agence Digitale et descend jusqu'à la mi-hauteur de la 1ère carte */}
-      <div className="hidden lg:block absolute left-3 sm:left-6 lg:left-8 xl:left-12 top-[138px] xl:top-[150px] bottom-[127px] z-30 pointer-events-auto">
+      {/* Navigation Latérale (Vertical Dock) - Vient de la GAUCHE */}
+      <div
+        className={`hidden lg:block absolute left-3 sm:left-6 lg:left-8 xl:left-12 top-[138px] xl:top-[150px] bottom-[127px] z-30 pointer-events-auto transition-all duration-700 delay-150 ease-out ${isIntroReady ? "translate-x-0 opacity-100" : "-translate-x-16 opacity-0 pointer-events-none"
+          }`}
+      >
         <VerticalDock />
       </div>
 
@@ -211,38 +246,49 @@ function HeroContent() {
       <div className="relative flex-1 flex flex-col lg:flex-row items-center justify-between gap-6 z-20 my-auto py-2 lg:pl-20 xl:pl-24">
         {/* Hero Text */}
         <div
-          className={`max-w-xl xl:max-w-2xl flex flex-col justify-center transition-all duration-300 ${
-            !isHeroTextVisible ? "pointer-events-none" : ""
-          }`}
+          className={`max-w-xl xl:max-w-2xl flex flex-col justify-center transition-all duration-300 ${!isHeroTextVisible ? "pointer-events-none" : ""
+            }`}
           style={{
             opacity: heroTextOpacity,
             transform: `translate3d(0, ${scrollProgress * -50}px, 0)`,
           }}
         >
-          {/* Badge officiel (Light glass pill, sans clignotement) */}
-          <div className="inline-flex items-center gap-2.5 px-3.5 py-1.5 rounded-full bg-white/90 border border-[#0f172a]/10 backdrop-blur-md mb-4 sm:mb-5 w-fit shadow-sm">
+          {/* Badge officiel - Vient de la GAUCHE */}
+          <div
+            className={`inline-flex items-center gap-2.5 px-3.5 py-1.5 rounded-full bg-white/90 border border-[#0f172a]/10 backdrop-blur-md mb-4 sm:mb-5 w-fit shadow-sm transition-all duration-700 delay-100 ease-out ${isIntroReady ? "translate-x-0 opacity-100" : "-translate-x-20 opacity-0"
+              }`}
+          >
             <span className="w-2 h-2 rounded-full bg-[#b13257] shadow-[0_0_8px_#b13257]" />
             <span className="text-[10px] sm:text-xs font-bold tracking-[0.16em] uppercase text-[#0f172a] font-heading">
               AGENCE DIGITALE &amp; CRÉATIVE
             </span>
           </div>
 
-          {/* Titre fort avec contraste et gradient officiel */}
-          <h1 className="font-heading text-3xl sm:text-4xl md:text-5xl lg:text-5xl xl:text-6xl font-bold tracking-tight text-[#0f172a] leading-[1.1] mb-4 sm:mb-5 drop-shadow-sm">
+          {/* Titre fort - Vient du BAS */}
+          <h1
+            className={`font-heading text-3xl sm:text-4xl md:text-5xl lg:text-5xl xl:text-6xl font-bold tracking-tight text-[#0f172a] leading-[1.1] mb-4 sm:mb-5 drop-shadow-sm transition-all duration-800 delay-200 ease-out ${isIntroReady ? "translate-y-0 opacity-100" : "translate-y-16 opacity-0"
+              }`}
+          >
             Nous transformons vos idées <br />
             <span className="font-light italic bg-gradient-to-r from-[#b13257] via-[#78377e] to-[#3341ab] bg-clip-text text-transparent drop-shadow-sm">
               en expériences digitales.
             </span>
           </h1>
 
-          {/* Description concise officielle (Slate-700 haute lisibilité) */}
-          <p className="text-sm sm:text-base md:text-lg text-[#334155] font-normal leading-relaxed max-w-xl mb-6 sm:mb-7">
+          {/* Description concise officielle - Vient du BAS */}
+          <p
+            className={`text-sm sm:text-base md:text-lg text-[#334155] font-normal leading-relaxed max-w-xl mb-6 sm:mb-7 transition-all duration-800 delay-300 ease-out ${isIntroReady ? "translate-y-0 opacity-100" : "translate-y-14 opacity-0"
+              }`}
+          >
             De la conception à la réalisation, nous donnons vie à vos projets
             grâce à la créativité, la technologie et une vision stratégique.
           </p>
 
-          {/* Boutons d'action CTA */}
-          <div className="flex flex-wrap items-center gap-3.5 sm:gap-5">
+          {/* Boutons d'action CTA - Viennent du BAS */}
+          <div
+            className={`flex flex-wrap items-center gap-3.5 sm:gap-5 transition-all duration-800 delay-400 ease-out ${isIntroReady ? "translate-y-0 opacity-100 scale-100" : "translate-y-12 opacity-0 scale-95"
+              }`}
+          >
             {/* Primary CTA avec glissement de couleur */}
             <button
               onClick={triggerCtaAction}
@@ -250,11 +296,10 @@ function HeroContent() {
             >
               {/* Slide overlay */}
               <span
-                className={`absolute inset-0 bg-gradient-to-r from-[#ff6b35] via-[#b13257] to-[#78377e] transition-transform duration-400 ease-out pointer-events-none ${
-                  isCtaAnimating
+                className={`absolute inset-0 bg-gradient-to-r from-[#ff6b35] via-[#b13257] to-[#78377e] transition-transform duration-400 ease-out pointer-events-none ${isCtaAnimating
                     ? "translate-x-0 opacity-100"
                     : "-translate-x-full opacity-0 group-hover:translate-x-0 group-hover:opacity-100"
-                }`}
+                  }`}
               />
               <span className="relative z-10">Parlons de votre projet</span>
               <IconArrowRight className="relative z-10 w-4 h-4 transition-transform group-hover:translate-x-1" />
@@ -277,12 +322,11 @@ function HeroContent() {
           </div>
         </div>
 
-        {/* Right Column: Piliers de l'agence poussés à l'extrême droite */}
+        {/* Right Column: Piliers de l'agence - Vient de la DROITE */}
         <div
-          className={`hidden lg:flex flex-col items-start gap-4 pl-8 border-l-2 border-[#b13257]/30 my-auto py-2 ml-auto shrink-0 transition-opacity duration-300 ${
-            !isHeroTextVisible ? "pointer-events-none" : ""
-          }`}
-          style={{ opacity: heroTextOpacity }}
+          className={`hidden lg:flex flex-col items-start gap-4 pl-8 border-l-2 border-[#b13257]/30 my-auto py-2 ml-auto shrink-0 transition-all duration-800 delay-300 ease-out ${isIntroReady ? "translate-x-0 opacity-100" : "translate-x-20 opacity-0"
+            } ${!isHeroTextVisible ? "pointer-events-none" : ""}`}
+          style={{ opacity: isIntroReady ? heroTextOpacity : 0 }}
         >
           <span className="text-xs font-mono tracking-[0.2em] uppercase text-[#1e293b] font-bold hover:text-[#b13257] transition-colors cursor-default">
             CRÉATIVITÉ DIGITALE
@@ -300,35 +344,33 @@ function HeroContent() {
       </div>
 
       {/* ======================================================== */}
-      {/* 3. BOTTOM CARDS (Phase 1)                                */}
-      {/* Fades out as user scrolls toward the gallery             */}
-      {/* Centrée sur 12 colonnes compactes sans augmenter largeur */}
+      {/* 3. BOTTOM CARDS (Phase 1) - Vient du BAS                 */}
+      {/* 12 Colonnes : Card 1 (5 cols), Card 2 (4 cols), Card 3 (3 cols élargie de 50%) */}
       {/* ======================================================== */}
       <footer
-        className={`w-full pt-2 sm:pt-3 z-20 transition-all duration-300 pb-20 lg:pb-12 flex justify-center ${
-          !areBottomCardsVisible ? "pointer-events-none hidden" : ""
-        }`}
+        className={`w-full pt-2 sm:pt-3 z-20 transition-all duration-900 delay-500 ease-out pb-20 lg:pb-12 flex justify-center ${isIntroReady ? "translate-y-0 opacity-100" : "translate-y-28 opacity-0"
+          } ${!areBottomCardsVisible ? "pointer-events-none hidden" : ""}`}
         style={{
-          opacity: bottomCardsOpacity,
+          opacity: isIntroReady ? bottomCardsOpacity : 0,
           transform: `translate3d(0, ${scrollProgress * 40}px, 0)`,
         }}
       >
-        {/* Cartes alignées sur la ligne du bas (items-end), réparties sur 12 colonnes avec Card 1 élargie */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-3.5 sm:gap-4 items-end w-full max-w-[1220px] mx-auto px-2 sm:px-4">
-          {/* Carte 1: Projet à la une (élargie à 6 colonnes sur 12) */}
-          <div className="lg:col-span-6 flex">
+        {/* Cartes alignées sur la ligne du bas (items-end), réparties sur 12 colonnes avec Card 3 élargie à 3 colonnes */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-3.5 sm:gap-4 items-end w-full max-w-[1240px] mx-auto px-2 sm:px-4">
+          {/* Carte 1: Projet à la une (5 colonnes) */}
+          <div className="lg:col-span-5 flex">
             <FeaturedCreationCard
               onInspectPrompt={(item) => setSelectedPromptItem(item)}
             />
           </div>
 
-          {/* Carte 2: Métriques clés Skynet Digital (4 colonnes sur 12, hauteur 70% de la 1ère carte) */}
+          {/* Carte 2: Métriques clés Skynet Digital (4 colonnes, hauteur 70% de la 1ère carte) */}
           <div className="lg:col-span-4 flex items-end">
             <StatsCard />
           </div>
 
-          {/* Carte 3: Démarrer un projet rapide (2 colonnes sur 12) */}
-          <div className="lg:col-span-2 flex items-end md:col-span-2 lg:col-span-2">
+          {/* Carte 3: Démarrer un projet rapide (3 colonnes — élargie de 50% !) */}
+          <div className="lg:col-span-3 flex items-end md:col-span-2 lg:col-span-3">
             <QuickPromptCard
               onGenerate={(prompt) => {
                 showToast(`Demande reçue : "${prompt.slice(0, 28)}..."`);

@@ -1,6 +1,7 @@
 "use client";
 
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
+import { createPortal } from "react-dom";
 import { IconClose, IconCheck, IconArrowRight } from "./Icons";
 
 export interface ServiceItem {
@@ -27,26 +28,39 @@ export default function ServiceDetailModal({
   onClose,
   onRequestQuote,
 }: ServiceDetailModalProps) {
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === "Escape") onClose();
     };
     if (service) {
+      document.body.style.overflow = "hidden";
       window.addEventListener("keydown", handleKeyDown);
     }
-    return () => window.removeEventListener("keydown", handleKeyDown);
+    return () => {
+      document.body.style.overflow = "unset";
+      window.removeEventListener("keydown", handleKeyDown);
+    };
   }, [service, onClose]);
 
-  if (!service) return null;
+  if (!service || !mounted) return null;
 
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 bg-black/60 backdrop-blur-md animate-in fade-in duration-200">
+  const modalContent = (
+    <div
+      className="fixed inset-0 z-[9999] flex items-center justify-center p-4 sm:p-6 bg-black/80 backdrop-blur-md animate-in fade-in duration-200 pointer-events-auto cursor-pointer"
+      onClick={onClose}
+    >
       <div
-        className="relative w-full max-w-xl rounded-3xl bg-[#0f121d]/95 border border-white/20 p-6 sm:p-8 text-white shadow-[0_25px_80px_rgba(0,0,0,0.85)] flex flex-col gap-6 animate-in zoom-in-95 duration-200"
+        className="relative w-full max-w-xl rounded-3xl bg-[#0f121d] border border-white/20 p-6 sm:p-8 text-white shadow-[0_25px_80px_rgba(0,0,0,0.95)] flex flex-col gap-6 animate-in zoom-in-95 duration-200 cursor-default"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Ambient Top Glow */}
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-3/4 h-24 bg-gradient-to-b from-[#b13257]/25 via-[#78377e]/15 to-transparent blur-2xl pointer-events-none rounded-t-3xl" />
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-3/4 h-24 bg-gradient-to-b from-[#b13257]/30 via-[#78377e]/20 to-transparent blur-2xl pointer-events-none rounded-t-3xl" />
 
         {/* Header */}
         <div className="relative flex items-start justify-between gap-4">
@@ -60,9 +74,13 @@ export default function ServiceDetailModal({
           </div>
 
           <button
-            onClick={onClose}
-            className="w-9 h-9 rounded-full bg-white/10 hover:bg-white/20 border border-white/10 flex items-center justify-center text-white/80 hover:text-white transition-colors"
-            aria-label="Fermer"
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation();
+              onClose();
+            }}
+            className="w-9 h-9 rounded-full bg-white/10 hover:bg-white/25 active:scale-95 border border-white/20 flex items-center justify-center text-white/90 hover:text-white transition-all cursor-pointer"
+            aria-label="Fermer la fenêtre"
           >
             <IconClose className="w-4 h-4" />
           </button>
@@ -101,18 +119,24 @@ export default function ServiceDetailModal({
         {/* Action Buttons */}
         <div className="relative flex flex-wrap items-center justify-end gap-3 pt-4 border-t border-white/10">
           <button
-            onClick={onClose}
-            className="px-5 py-2.5 rounded-full text-xs font-medium text-white/70 hover:text-white hover:bg-white/10 transition-colors"
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation();
+              onClose();
+            }}
+            className="px-5 py-2.5 rounded-full text-xs font-medium text-white/80 hover:text-white bg-white/5 hover:bg-white/15 border border-white/10 transition-all cursor-pointer active:scale-95"
           >
             Fermer
           </button>
 
           <button
-            onClick={() => {
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation();
               onRequestQuote(service.title);
               onClose();
             }}
-            className="inline-flex items-center gap-2.5 px-6 py-2.5 rounded-full bg-gradient-to-r from-[#ff6b35] via-[#b13257] to-[#78377e] text-white text-xs sm:text-sm font-semibold shadow-lg hover:scale-[1.02] transition-transform"
+            className="inline-flex items-center gap-2.5 px-6 py-2.5 rounded-full bg-gradient-to-r from-[#ff6b35] via-[#b13257] to-[#78377e] text-white text-xs sm:text-sm font-semibold shadow-lg hover:scale-[1.02] active:scale-95 transition-transform cursor-pointer"
           >
             <span>Demander un devis pour ce service</span>
             <IconArrowRight className="w-3.5 h-3.5" />
@@ -121,5 +145,7 @@ export default function ServiceDetailModal({
       </div>
     </div>
   );
+
+  return createPortal(modalContent, document.body);
 }
 

@@ -11,6 +11,7 @@ import {
   IconPlay,
   IconFacebook,
   IconWhatsapp,
+  IconPhone,
 } from "./Icons";
 
 interface VerticalDockProps {
@@ -21,12 +22,24 @@ export default function VerticalDock({ onOpenShowreel }: VerticalDockProps) {
   const [activeTab, setActiveTab] = useState<string>("home");
 
   const navItems = [
-    { id: "home", label: "Accueil Skynet", icon: IconHome },
-    { id: "services", label: "Nos Expertises", icon: IconGrid },
-    { id: "creations", label: "Réalisations & 3D", icon: IconLayers },
-    { id: "formations", label: "Formations Digitales", icon: IconHeart },
-    { id: "contact", label: "Échanger avec un expert", icon: IconMessage },
+    { id: "home", label: "Accueil Skynet", targetId: "", icon: IconHome },
+    { id: "services", label: "Nos 7 Expertises", targetId: "services", icon: IconGrid },
+    { id: "creations", label: "Réalisations & Portfolio", targetId: "realisations", icon: IconLayers },
+    { id: "formations", label: "Formations en IA", targetId: "formations", icon: IconHeart },
+    { id: "contact", label: "Échanger avec un expert", targetId: "contact", icon: IconMessage },
   ];
+
+  const handleNavClick = (id: string, targetId: string) => {
+    setActiveTab(id);
+    if (!targetId) {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    } else {
+      const el = document.getElementById(targetId);
+      if (el) {
+        el.scrollIntoView({ behavior: "smooth" });
+      }
+    }
+  };
 
   return (
     <aside
@@ -41,7 +54,7 @@ export default function VerticalDock({ onOpenShowreel }: VerticalDockProps) {
           return (
             <button
               key={item.id}
-              onClick={() => setActiveTab(item.id)}
+              onClick={() => handleNavClick(item.id, item.targetId)}
               className={`relative group w-10 h-10 rounded-full flex items-center justify-center transition-all duration-300 ${
                 isActive
                   ? "bg-[#0f172a] text-white shadow-md scale-105"
@@ -60,24 +73,21 @@ export default function VerticalDock({ onOpenShowreel }: VerticalDockProps) {
         })}
       </div>
 
-      {/* 2. Centre & Bas : Profil Officiel Skynet & Réseaux Sociaux */}
+      {/* 2. Centre & Bas : Appel Direct 620121674 & Réseaux Sociaux */}
       <div className="flex flex-col items-center gap-2.5 pt-3 border-t border-slate-200/60 w-full">
-        {/* Logo Ruban 3D Skynet Digital avec pastille active */}
+        {/* Remplacement du logo S par l'icône téléphone pour appel direct 620121674 */}
         <div className="relative group">
-          <div className="w-10 h-10 rounded-full p-[2px] bg-gradient-to-tr from-[#b13257] via-[#78377e] to-[#3341ab] shadow-[0_0_15px_rgba(177,50,87,0.35)] cursor-pointer">
-            <div className="w-full h-full rounded-full overflow-hidden bg-white relative p-0.5 flex items-center justify-center">
-              <Image
-                src="/brand/logo-s-ribbon.png"
-                alt="Skynet Digital"
-                width={36}
-                height={36}
-                className="w-full h-full object-contain"
-              />
-            </div>
-          </div>
-          <span className="absolute bottom-0 right-0 w-2.5 h-2.5 rounded-full bg-emerald-500 border-2 border-white shadow-sm" />
+          <a
+            href="tel:620121674"
+            className="w-10 h-10 rounded-full flex items-center justify-center bg-gradient-to-tr from-emerald-500 via-teal-500 to-emerald-600 text-white shadow-[0_0_16px_rgba(16,185,129,0.5)] hover:scale-110 active:scale-95 transition-all duration-300 relative group/btn"
+            aria-label="Appeler le 620 12 16 74"
+            title="Appeler le 620 12 16 74"
+          >
+            <IconPhone className="w-4 h-4 animate-pulse text-white" />
+            <span className="absolute -top-0.5 -right-0.5 w-2.5 h-2.5 rounded-full bg-emerald-300 border-2 border-white shadow-sm" />
+          </a>
           <span className="pointer-events-none absolute left-full ml-3 top-1/2 -translate-y-1/2 px-2.5 py-1 rounded-lg text-xs font-semibold bg-[#0f172a] text-white shadow-2xl opacity-0 group-hover:opacity-100 transition-all duration-200 whitespace-nowrap z-50">
-            Skynet Digital · Agence Créative
+            Appel direct · 620 12 16 74
           </span>
         </div>
 

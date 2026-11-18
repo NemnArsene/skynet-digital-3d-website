@@ -22,10 +22,19 @@ export default function MobileBottomNav({
 
   const handleTabClick = (tabId: string) => {
     setActiveTab(tabId);
-    if (tabId === "contact" && onOpenProjectInput) {
-      onOpenProjectInput();
-    } else if (tabId === "services" && onOpenExpertises) {
-      onOpenExpertises();
+    if (tabId === "home") {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    } else if (tabId === "services") {
+      const el = document.getElementById("services");
+      if (el) el.scrollIntoView({ behavior: "smooth" });
+      else if (onOpenExpertises) onOpenExpertises();
+    } else if (tabId === "creations") {
+      const el = document.getElementById("realisations");
+      if (el) el.scrollIntoView({ behavior: "smooth" });
+    } else if (tabId === "contact") {
+      const el = document.getElementById("contact");
+      if (el) el.scrollIntoView({ behavior: "smooth" });
+      else if (onOpenProjectInput) onOpenProjectInput();
     }
   };
 

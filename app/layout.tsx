@@ -6,7 +6,11 @@ export const metadata: Metadata = {
   title: "SKYNET DIGITAL | Agence Digitale & Créative — Donnez vie à vos idées",
   description: "Agence créative et technologique de référence : création de sites web, applications mobiles, production vidéo cinématique et formation en IA.",
   icons: {
-    icon: "/brand/logo-s-ribbon.png",
+    icon: [
+      { url: "/brand/logo-s-ribbon.png", type: "image/png" },
+      { url: "/favicon.ico", type: "image/x-icon" },
+    ],
+    shortcut: "/favicon.ico",
     apple: "/brand/logo-s-ribbon.png",
   },
 };
@@ -19,6 +23,9 @@ export default function RootLayout({
   return (
     <html lang="fr" className="h-full antialiased dark" suppressHydrationWarning>
       <head>
+        <link rel="icon" href="/brand/logo-s-ribbon.png" type="image/png" />
+        <link rel="shortcut icon" href="/favicon.ico" />
+        <link rel="apple-touch-icon" href="/brand/logo-s-ribbon.png" />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link
