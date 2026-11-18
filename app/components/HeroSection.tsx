@@ -11,7 +11,8 @@ import QuickPromptCard from "./QuickPromptCard";
 import ShowreelModal from "./ShowreelModal";
 import PromptModal from "./PromptModal";
 import ServicesShowcase from "./ServicesShowcase";
-import { IconSearch, IconArrowRight, IconPlay } from "./Icons";
+import MobileBottomNav from "./MobileBottomNav";
+import { IconSearch, IconArrowRight, IconPlay, IconClose } from "./Icons";
 
 interface HeroSectionProps {
   frames?: string[];
@@ -24,6 +25,9 @@ function HeroContent() {
   const [selectedPromptItem, setSelectedPromptItem] = useState<any>(null);
   const [activeNav, setActiveNav] = useState("expertises");
   const [toastMessage, setToastMessage] = useState<string | null>(null);
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [isCtaAnimating, setIsCtaAnimating] = useState(false);
 
   const showToast = (msg: string) => {
     setToastMessage(msg);
@@ -38,6 +42,21 @@ function HeroContent() {
     { id: "contact", label: "Contact" },
   ];
 
+  // CTA Click handler with smooth color-slide animation before navigation
+  const triggerCtaAction = (e?: React.MouseEvent) => {
+    if (e) e.preventDefault();
+    setIsCtaAnimating(true);
+    showToast("Connexion à l'espace projet Skynet...");
+    setTimeout(() => {
+      setIsCtaAnimating(false);
+      const input = document.getElementById("project-input-hero");
+      if (input) {
+        input.focus();
+        input.scrollIntoView({ behavior: "smooth", block: "center" });
+      }
+    }, 380);
+  };
+
   // Opacity transitions based on scroll progression
   // Phase 1: Initial Hero Text fades out as camera approaches doorway (between 0.08 and 0.25)
   const heroTextOpacity = Math.max(0, Math.min(1, 1 - (scrollProgress - 0.08) / 0.17));
@@ -48,27 +67,26 @@ function HeroContent() {
   const areBottomCardsVisible = bottomCardsOpacity > 0;
 
   return (
-    <section className="relative w-full h-full flex flex-col justify-between py-5 px-4 sm:px-8 lg:px-12 xl:px-16 selection:bg-[#b13257]/40 selection:text-white">
-      
+    <section className="relative w-full h-full flex flex-col justify-between py-4 sm:py-5 px-3 sm:px-6 lg:px-12 xl:px-16 selection:bg-[#b13257]/40 selection:text-white">
       {/* Toast Notification */}
       {toastMessage && (
-        <div className="fixed top-6 right-6 z-50 flex items-center gap-2.5 px-4 py-2.5 rounded-full bg-[#0f121d] border border-white/20 text-white text-xs shadow-2xl animate-in slide-in-from-top-4">
+        <div className="fixed top-5 right-5 z-50 flex items-center gap-2.5 px-4 py-2 rounded-full bg-[#0f172a] border border-white/20 text-white text-xs shadow-2xl animate-in slide-in-from-top-4">
           <span className="w-2 h-2 rounded-full bg-emerald-400" />
           <span>{toastMessage}</span>
         </div>
       )}
 
       {/* Atmospheric Ambient Glows (Subtle, Light Premium) */}
-      <div className="pointer-events-none absolute top-0 left-1/4 w-[750px] h-[750px] bg-gradient-to-tr from-[#78377e]/15 via-[#b13257]/8 to-transparent rounded-full blur-[160px] -z-10 animate-pulse-subtle" />
-      <div className="pointer-events-none absolute bottom-0 right-1/4 w-[850px] h-[850px] bg-gradient-to-bl from-[#3341ab]/12 via-[#78377e]/10 to-transparent rounded-full blur-[180px] -z-10" />
+      <div className="pointer-events-none absolute top-0 left-1/4 w-[650px] h-[650px] bg-gradient-to-tr from-[#78377e]/12 via-[#b13257]/6 to-transparent rounded-full blur-[140px] -z-10 animate-pulse-subtle" />
+      <div className="pointer-events-none absolute bottom-0 right-1/4 w-[750px] h-[750px] bg-gradient-to-bl from-[#3341ab]/10 via-[#78377e]/8 to-transparent rounded-full blur-[160px] -z-10" />
 
       {/* ======================================================== */}
       {/* 1. TOP NAVIGATION BAR (High Contrast, Refined Glass)     */}
       {/* ======================================================== */}
-      <header className="w-full flex items-center justify-between gap-4 z-40 pb-4">
+      <header className="w-full flex items-center justify-between gap-3 z-40 pb-3 sm:pb-4">
         {/* Left: Brand Identity with official 3D S Ribbon Logo */}
-        <div className="flex items-center gap-3 shrink-0">
-          <div className="relative w-10 h-10 sm:w-11 sm:h-11 rounded-2xl bg-gradient-to-tr from-[#b13257] via-[#78377e] to-[#3341ab] p-[2px] shadow-[0_0_25px_rgba(177,50,87,0.35)]">
+        <div className="flex items-center gap-2.5 sm:gap-3 shrink-0">
+          <div className="relative w-9 h-9 sm:w-11 sm:h-11 rounded-2xl bg-gradient-to-tr from-[#b13257] via-[#78377e] to-[#3341ab] p-[2px] shadow-[0_0_20px_rgba(177,50,87,0.35)]">
             <div className="w-full h-full rounded-[14px] bg-white overflow-hidden flex items-center justify-center p-1 shadow-inner">
               <Image
                 src="/brand/logo-s-ribbon.png"
@@ -82,22 +100,22 @@ function HeroContent() {
           </div>
 
           <div className="flex flex-col">
-            <span className="font-heading text-base sm:text-lg font-bold tracking-tight text-[#0f172a] flex items-center gap-1.5">
+            <span className="font-heading text-sm sm:text-base lg:text-lg font-bold tracking-tight text-[#0f172a] flex items-center gap-1.5">
               SKYNET DIGITAL
-              <span className="text-[10px] font-mono tracking-widest uppercase px-1.5 py-0.5 rounded bg-[#0f172a]/10 text-[#0f172a] font-bold">
+              <span className="text-[9px] sm:text-[10px] font-mono tracking-widest uppercase px-1.5 py-0.5 rounded bg-[#0f172a]/10 text-[#0f172a] font-bold">
                 AGENCE
               </span>
             </span>
-            <span className="text-[10px] tracking-[0.22em] text-[#475569] uppercase font-semibold">
+            <span className="text-[9px] sm:text-[10px] tracking-[0.2em] text-[#475569] uppercase font-semibold truncate max-w-[170px] sm:max-w-none">
               Donnez vie à vos idées.
             </span>
           </div>
         </div>
 
-        {/* Center: Floating Pill Navigation Bar */}
+        {/* Center: Floating Pill Navigation Bar (Desktop & Tablet) */}
         <nav
           aria-label="Navigation principale"
-          className="hidden md:flex items-center gap-1 bg-white/85 backdrop-blur-xl border border-[#0f172a]/10 rounded-full p-1.5 shadow-lg"
+          className="hidden md:flex items-center gap-1 bg-white/90 backdrop-blur-xl border border-[#0f172a]/10 rounded-full p-1.5 shadow-md"
         >
           {navLinks.map((link) => {
             const isActive = activeNav === link.id;
@@ -105,9 +123,9 @@ function HeroContent() {
               <button
                 key={link.id}
                 onClick={() => setActiveNav(link.id)}
-                className={`px-4 sm:px-6 py-1.5 rounded-full text-xs sm:text-sm font-semibold transition-all duration-300 ${
+                className={`px-3.5 lg:px-5 py-1.5 rounded-full text-xs sm:text-sm font-semibold transition-all duration-300 ${
                   isActive
-                    ? "bg-[#0f172a] text-white shadow-md"
+                    ? "bg-[#0f172a] text-white shadow-sm"
                     : "text-[#334155] hover:text-[#0f172a] hover:bg-[#0f172a]/5"
                 }`}
               >
@@ -117,113 +135,145 @@ function HeroContent() {
           })}
         </nav>
 
-        {/* Right: Search & Primary CTA */}
-        <div className="flex items-center gap-2.5 sm:gap-3 shrink-0">
+        {/* Right: Search & Primary Animated CTA */}
+        <div className="relative flex items-center gap-2 sm:gap-3 shrink-0">
+          {/* Bouton Recherche */}
           <button
-            onClick={() => showToast("Recherche dans nos réalisations...")}
-            aria-label="Rechercher"
-            className="w-10 h-10 rounded-full bg-white/85 backdrop-blur-xl border border-[#0f172a]/10 flex items-center justify-center text-[#334155] hover:text-[#0f172a] hover:bg-white transition-all shadow-md"
+            onClick={() => setIsSearchOpen(!isSearchOpen)}
+            aria-label="Rechercher sur le site"
+            className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-white/90 backdrop-blur-xl border border-[#0f172a]/10 flex items-center justify-center text-[#334155] hover:text-[#0f172a] hover:bg-white transition-all shadow-sm"
           >
-            <IconSearch className="w-4 h-4" />
+            {isSearchOpen ? <IconClose className="w-3.5 h-3.5" /> : <IconSearch className="w-4 h-4" />}
           </button>
 
-          {/* Primary CTA: Parlons de votre projet */}
-          <a
-            href="#contact"
-            onClick={(e) => {
-              e.preventDefault();
-              showToast("Prise de contact Skynet Digital initiée...");
-              const input = document.getElementById("project-input-hero");
-              if (input) input.focus();
-            }}
-            className="group relative inline-flex items-center gap-3 pl-5 pr-2 py-2 rounded-full cta-gradient-bg glow-cta text-white font-semibold text-xs sm:text-sm transition-all duration-300 hover:scale-[1.02] shadow-xl"
-          >
-            <span className="tracking-tight">Parlons de votre projet</span>
-            <div className="w-7 h-7 rounded-full bg-white text-black flex items-center justify-center shadow-md transition-transform duration-300 group-hover:translate-x-0.5">
-              <IconArrowRight className="w-3.5 h-3.5 text-black" />
+          {/* Tiroir de recherche contextuel sans collision avec le bouton CTA */}
+          {isSearchOpen && (
+            <div className="absolute right-0 top-12 mt-2 w-72 sm:w-80 bg-white/95 backdrop-blur-2xl border border-slate-200/90 rounded-2xl p-3 shadow-[0_20px_50px_rgba(0,0,0,0.18)] z-50 animate-in fade-in zoom-in-95 duration-150">
+              <form
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  showToast(`Recherche : "${searchQuery}"`);
+                  setIsSearchOpen(false);
+                }}
+                className="flex items-center gap-2"
+              >
+                <input
+                  type="text"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  placeholder="Rechercher un service, projet..."
+                  autoFocus
+                  className="flex-1 bg-slate-100 rounded-xl px-3 py-2 text-xs text-[#0f172a] placeholder-[#94a3b8] focus:outline-none focus:ring-1 focus:ring-[#b13257]"
+                />
+                <button
+                  type="submit"
+                  className="px-3 py-2 rounded-xl bg-[#0f172a] text-white text-xs font-semibold hover:bg-[#b13257] transition-colors"
+                >
+                  OK
+                </button>
+              </form>
             </div>
-          </a>
+          )}
+
+          {/* Primary CTA avec animation de glissement de couleur (Caché sur mobile pour alléger l'en-tête) */}
+          <button
+            onClick={triggerCtaAction}
+            className="hidden sm:inline-flex group relative items-center gap-2 sm:gap-3 pl-4 sm:pl-5 pr-1.5 sm:pr-2 py-1.5 sm:py-2 rounded-full overflow-hidden shadow-lg transition-all duration-300 hover:scale-[1.02] bg-gradient-to-r from-[#b13257] via-[#78377e] to-[#3341ab] text-white font-semibold text-xs sm:text-sm"
+          >
+            {/* Calque de glissement de couleur officiel de gauche vers la droite */}
+            <span
+              className={`absolute inset-0 bg-gradient-to-r from-[#ff6b35] via-[#b13257] to-[#78377e] transition-transform duration-400 ease-out pointer-events-none ${
+                isCtaAnimating
+                  ? "translate-x-0 opacity-100"
+                  : "-translate-x-full opacity-0 group-hover:translate-x-0 group-hover:opacity-100"
+              }`}
+            />
+
+            <span className="relative z-10 tracking-tight whitespace-nowrap">
+              Parlons de votre projet
+            </span>
+            <div className="relative z-10 w-6 h-6 sm:w-7 sm:h-7 rounded-full bg-white text-black flex items-center justify-center shadow-md transition-transform duration-300 group-hover:translate-x-0.5">
+              <IconArrowRight className="w-3 sm:w-3.5 h-3 sm:h-3.5 text-black" />
+            </div>
+          </button>
         </div>
       </header>
 
+      {/* Navigation Latérale (Vertical Dock) - Commence au niveau du titre Agence Digitale et descend jusqu'à la mi-hauteur de la 1ère carte */}
+      <div className="hidden lg:block absolute left-3 sm:left-6 lg:left-8 xl:left-12 top-[138px] xl:top-[150px] bottom-[127px] z-30 pointer-events-auto">
+        <VerticalDock />
+      </div>
+
       {/* ======================================================== */}
       {/* 2. MAIN HERO BODY                                        */}
-      {/* Positioned directly next to the lateral navigation dock  */}
+      {/* Positionné directement à côté du dock latéral            */}
       {/* ======================================================== */}
-      <div className="relative flex-1 flex flex-col lg:flex-row items-center justify-between gap-6 lg:gap-8 z-20 my-auto py-2">
-        
-        {/* Left Side: Lateral Dock + Hero Text side by side */}
-        <div className="flex items-center gap-6 lg:gap-8 xl:gap-10 w-full lg:w-auto">
-          {/* Navigation Latérale (Vertical Dock) */}
-          <div className="hidden lg:block shrink-0">
-            <VerticalDock onOpenShowreel={() => setIsShowreelOpen(true)} />
+      <div className="relative flex-1 flex flex-col lg:flex-row items-center justify-between gap-6 z-20 my-auto py-2 lg:pl-20 xl:pl-24">
+        {/* Hero Text */}
+        <div
+          className={`max-w-xl xl:max-w-2xl flex flex-col justify-center transition-all duration-300 ${
+            !isHeroTextVisible ? "pointer-events-none" : ""
+          }`}
+          style={{
+            opacity: heroTextOpacity,
+            transform: `translate3d(0, ${scrollProgress * -50}px, 0)`,
+          }}
+        >
+          {/* Badge officiel (Light glass pill, sans clignotement) */}
+          <div className="inline-flex items-center gap-2.5 px-3.5 py-1.5 rounded-full bg-white/90 border border-[#0f172a]/10 backdrop-blur-md mb-4 sm:mb-5 w-fit shadow-sm">
+            <span className="w-2 h-2 rounded-full bg-[#b13257] shadow-[0_0_8px_#b13257]" />
+            <span className="text-[10px] sm:text-xs font-bold tracking-[0.16em] uppercase text-[#0f172a] font-heading">
+              AGENCE DIGITALE &amp; CRÉATIVE
+            </span>
           </div>
 
-          {/* Hero Text: Directement à côté de la navigation latérale */}
-          <div
-            className={`max-w-xl xl:max-w-2xl flex flex-col justify-center transition-all duration-300 ${
-              !isHeroTextVisible ? "pointer-events-none" : ""
-            }`}
-            style={{
-              opacity: heroTextOpacity,
-              transform: `translate3d(0, ${scrollProgress * -50}px, 0)`,
-            }}
-          >
-            {/* Badge officiel (Dark glass pill with magenta pulse) */}
-            <div className="inline-flex items-center gap-2.5 px-4 py-1.5 rounded-full bg-white/90 border border-[#0f172a]/15 backdrop-blur-md mb-5 w-fit shadow-md">
-              <span className="relative flex h-2 w-2">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#b13257] opacity-75" />
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-[#b13257] shadow-[0_0_8px_#b13257]" />
-              </span>
-              <span className="text-[11px] sm:text-xs font-bold tracking-[0.16em] uppercase text-[#0f172a] font-heading">
-                AGENCE DIGITALE &amp; CRÉATIVE
-              </span>
-            </div>
+          {/* Titre fort avec contraste et gradient officiel */}
+          <h1 className="font-heading text-3xl sm:text-4xl md:text-5xl lg:text-5xl xl:text-6xl font-bold tracking-tight text-[#0f172a] leading-[1.1] mb-4 sm:mb-5 drop-shadow-sm">
+            Nous transformons vos idées <br />
+            <span className="font-light italic bg-gradient-to-r from-[#b13257] via-[#78377e] to-[#3341ab] bg-clip-text text-transparent drop-shadow-sm">
+              en expériences digitales.
+            </span>
+          </h1>
 
-            {/* Titre fort avec contraste et gradient officiel */}
-            <h1 className="font-heading text-4xl sm:text-5xl lg:text-5xl xl:text-6xl font-bold tracking-tight text-[#0f172a] leading-[1.08] mb-5 drop-shadow-sm">
-              Nous transformons vos idées <br />
-              <span className="font-light italic bg-gradient-to-r from-[#b13257] via-[#78377e] to-[#3341ab] bg-clip-text text-transparent drop-shadow-sm">
-                en expériences digitales.
-              </span>
-            </h1>
+          {/* Description concise officielle (Slate-700 haute lisibilité) */}
+          <p className="text-sm sm:text-base md:text-lg text-[#334155] font-normal leading-relaxed max-w-xl mb-6 sm:mb-7">
+            De la conception à la réalisation, nous donnons vie à vos projets
+            grâce à la créativité, la technologie et une vision stratégique.
+          </p>
 
-            {/* Description concise officielle (Slate-700 haute lisibilité) */}
-            <p className="text-base sm:text-lg text-[#334155] font-normal leading-relaxed max-w-xl mb-7">
-              De la conception à la réalisation, nous donnons vie à vos projets
-              grâce à la créativité, la technologie et une vision stratégique.
-            </p>
+          {/* Boutons d'action CTA */}
+          <div className="flex flex-wrap items-center gap-3.5 sm:gap-5">
+            {/* Primary CTA avec glissement de couleur */}
+            <button
+              onClick={triggerCtaAction}
+              className="group relative inline-flex items-center gap-3 px-6 sm:px-7 py-3 sm:py-3.5 rounded-full overflow-hidden shadow-xl transition-all duration-300 hover:scale-[1.03] bg-gradient-to-r from-[#b13257] via-[#78377e] to-[#3341ab] text-white font-semibold text-xs sm:text-sm md:text-base"
+            >
+              {/* Slide overlay */}
+              <span
+                className={`absolute inset-0 bg-gradient-to-r from-[#ff6b35] via-[#b13257] to-[#78377e] transition-transform duration-400 ease-out pointer-events-none ${
+                  isCtaAnimating
+                    ? "translate-x-0 opacity-100"
+                    : "-translate-x-full opacity-0 group-hover:translate-x-0 group-hover:opacity-100"
+                }`}
+              />
+              <span className="relative z-10">Parlons de votre projet</span>
+              <IconArrowRight className="relative z-10 w-4 h-4 transition-transform group-hover:translate-x-1" />
+            </button>
 
-            {/* Boutons d'action CTA */}
-            <div className="flex flex-wrap items-center gap-4 sm:gap-6">
-              {/* Primary CTA */}
-              <button
-                onClick={() => {
-                  showToast("Ouverture de l'espace projet...");
-                  const input = document.getElementById("project-input-hero");
-                  if (input) input.focus();
-                }}
-                className="group inline-flex items-center gap-3 px-7 py-3.5 rounded-full cta-gradient-bg glow-cta text-white font-semibold text-sm sm:text-base transition-all duration-300 hover:scale-[1.03] shadow-xl"
-              >
-                <span>Parlons de votre projet</span>
-                <IconArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
-              </button>
-
-              {/* Secondary CTA: Découvrir nos services (High-contrast glass) */}
-              <button
-                onClick={() => setIsShowreelOpen(true)}
-                className="group inline-flex items-center gap-3 text-[#0f172a] hover:text-[#b13257] transition-colors"
-              >
-                <div className="w-11 h-11 rounded-full bg-white/90 border border-[#0f172a]/15 flex items-center justify-center group-hover:scale-110 group-hover:border-[#b13257]/40 transition-all shadow-md backdrop-blur-md">
-                  <div className="w-7 h-7 rounded-full bg-[#0f172a]/10 group-hover:bg-[#b13257] flex items-center justify-center transition-colors">
-                    <IconPlay className="w-3 h-3 text-[#0f172a] group-hover:text-white fill-current ml-0.5" />
-                  </div>
+            {/* Secondary CTA: Découvrir nos services (High-contrast glass) */}
+            <button
+              onClick={() => setIsShowreelOpen(true)}
+              className="group inline-flex items-center gap-2.5 sm:gap-3 text-[#0f172a] hover:text-[#b13257] transition-colors"
+            >
+              <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-full bg-white/90 border border-[#0f172a]/15 flex items-center justify-center group-hover:scale-110 group-hover:border-[#b13257]/40 transition-all shadow-md backdrop-blur-md">
+                <div className="w-6 h-6 sm:w-7 sm:h-7 rounded-full bg-[#0f172a]/10 group-hover:bg-[#b13257] flex items-center justify-center transition-colors">
+                  <IconPlay className="w-2.5 h-2.5 sm:w-3 sm:h-3 text-[#0f172a] group-hover:text-white fill-current ml-0.5" />
                 </div>
-                <span className="text-sm sm:text-base font-semibold tracking-tight">
-                  Découvrir nos services
-                </span>
-              </button>
-            </div>
+              </div>
+              <span className="text-xs sm:text-sm md:text-base font-semibold tracking-tight">
+                Découvrir nos services
+              </span>
+            </button>
           </div>
         </div>
 
@@ -252,9 +302,10 @@ function HeroContent() {
       {/* ======================================================== */}
       {/* 3. BOTTOM CARDS (Phase 1)                                */}
       {/* Fades out as user scrolls toward the gallery             */}
+      {/* Centrée sur 12 colonnes compactes sans augmenter largeur */}
       {/* ======================================================== */}
       <footer
-        className={`w-full pt-3 z-20 transition-all duration-300 ${
+        className={`w-full pt-2 sm:pt-3 z-20 transition-all duration-300 pb-20 lg:pb-12 flex justify-center ${
           !areBottomCardsVisible ? "pointer-events-none hidden" : ""
         }`}
         style={{
@@ -262,21 +313,22 @@ function HeroContent() {
           transform: `translate3d(0, ${scrollProgress * 40}px, 0)`,
         }}
       >
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-4 sm:gap-6 items-stretch">
-          {/* Carte 1: Projet à la une (5 cols) */}
-          <div className="lg:col-span-5 flex">
+        {/* Cartes alignées sur la ligne du bas (items-end), réparties sur 12 colonnes avec Card 1 élargie */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-3.5 sm:gap-4 items-end w-full max-w-[1220px] mx-auto px-2 sm:px-4">
+          {/* Carte 1: Projet à la une (élargie à 6 colonnes sur 12) */}
+          <div className="lg:col-span-6 flex">
             <FeaturedCreationCard
               onInspectPrompt={(item) => setSelectedPromptItem(item)}
             />
           </div>
 
-          {/* Carte 2: Métriques clés Skynet Digital (4 cols) */}
-          <div className="lg:col-span-4 flex">
+          {/* Carte 2: Métriques clés Skynet Digital (4 colonnes sur 12, hauteur 70% de la 1ère carte) */}
+          <div className="lg:col-span-4 flex items-end">
             <StatsCard />
           </div>
 
-          {/* Carte 3: Démarrer un projet rapide (3 cols) */}
-          <div className="lg:col-span-3 flex">
+          {/* Carte 3: Démarrer un projet rapide (2 colonnes sur 12) */}
+          <div className="lg:col-span-2 flex items-end md:col-span-2 lg:col-span-2">
             <QuickPromptCard
               onGenerate={(prompt) => {
                 showToast(`Demande reçue : "${prompt.slice(0, 28)}..."`);
@@ -295,6 +347,15 @@ function HeroContent() {
         onRequestQuote={(serviceTitle) => {
           showToast(`Demande de devis pour : "${serviceTitle}"`);
         }}
+      />
+
+      {/* Barre de navigation mobile flottante façon App */}
+      <MobileBottomNav
+        onOpenProjectInput={() => {
+          const input = document.getElementById("project-input-hero");
+          if (input) input.focus();
+        }}
+        onOpenExpertises={() => setIsShowreelOpen(true)}
       />
 
       {/* Modales Interactives */}

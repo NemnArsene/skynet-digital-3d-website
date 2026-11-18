@@ -327,10 +327,10 @@ export default function HeroCanvas({ frames, children }: HeroCanvasProps) {
             {children}
           </div>
 
-          {/* Subtle Scroll Progress Indicator */}
+          {/* Subtle Scroll Progress Indicator (Desktop & Tablette uniquement pour ne pas masquer le menu mobile) */}
           <div
             aria-hidden="true"
-            className="pointer-events-none absolute bottom-3 left-1/2 -translate-x-1/2 z-20 flex items-center gap-3 px-3 py-1 rounded-full bg-black/50 backdrop-blur-md border border-white/10 text-white/60 text-[10px] font-mono tracking-widest uppercase transition-opacity duration-500"
+            className="pointer-events-none absolute bottom-3 left-1/2 -translate-x-1/2 z-20 hidden md:flex items-center gap-3 px-3 py-1 rounded-full bg-black/50 backdrop-blur-md border border-white/10 text-white/60 text-[10px] font-mono tracking-widest uppercase transition-opacity duration-500"
             style={{ opacity: scrollProgress > 0.98 ? 0 : 0.85 }}
           >
             <span>DÉFILEZ POUR EXPLORER</span>

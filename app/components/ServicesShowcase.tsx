@@ -197,10 +197,7 @@ export default function ServicesShowcase({
       {/* Top Header Banner: Pôles d'Expertises Skynet Digital */}
       <div className="w-full flex justify-center pt-16 sm:pt-20">
         <div className="pointer-events-auto inline-flex items-center gap-3 px-5 py-2 rounded-full bg-[#0f121d]/85 backdrop-blur-xl border border-white/20 text-white shadow-2xl animate-in fade-in slide-in-from-top-4 duration-300">
-          <span className="flex h-2 w-2 relative">
-            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#b13257] opacity-75" />
-            <span className="relative inline-flex rounded-full h-2 w-2 bg-[#b13257]" />
-          </span>
+          <span className="w-2 h-2 rounded-full bg-[#b13257] shadow-[0_0_8px_#b13257]" />
           <span className="text-xs sm:text-sm font-semibold tracking-wide font-heading">
             NOS EXPERTISES &amp; SERVICES
           </span>
@@ -226,10 +223,9 @@ export default function ServicesShowcase({
               onMouseEnter={() => setHoveredServiceId(service.id)}
               onMouseLeave={() => setHoveredServiceId(null)}
             >
-              {/* Pulsing Radar Ring at Base of Exhibit */}
+              {/* Stable Base Pin at Exhibit */}
               <div className="relative flex items-center justify-center">
-                <span className="absolute -inset-3 rounded-full bg-[#b13257]/25 animate-ping" />
-                <span className="relative flex h-3 w-3 rounded-full bg-[#b13257] shadow-[0_0_12px_#b13257]" />
+                <span className="w-2.5 h-2.5 rounded-full bg-[#b13257] shadow-[0_0_10px_#b13257]" />
               </div>
 
               {/* Connecting Glow Line */}
@@ -271,8 +267,8 @@ export default function ServicesShowcase({
         })}
       </div>
 
-      {/* Bottom Interactive Services Strip / Carousel */}
-      <div className="w-full flex flex-col items-center gap-3 pb-6 pointer-events-auto">
+      {/* Bottom Interactive Services Strip / Carousel (Dégagé du menu mobile en bas) */}
+      <div className="w-full flex flex-col items-center gap-3 pb-24 sm:pb-8 pointer-events-auto">
         <div className="w-full max-w-5xl rounded-3xl bg-[#0f121d]/90 backdrop-blur-2xl border border-white/20 p-2.5 sm:p-3 shadow-[0_20px_60px_rgba(0,0,0,0.85)] flex flex-col md:flex-row items-center justify-between gap-3">
           
           {/* Services Horizontal Scroll / Tabs */}
@@ -306,7 +302,7 @@ export default function ServicesShowcase({
           {/* Quick CTA button */}
           <button
             onClick={() => onRequestQuote("Projet Global Skynet Digital")}
-            className="shrink-0 inline-flex items-center gap-2 px-5 py-2.5 rounded-2xl bg-gradient-to-r from-[#ff6b35] via-[#b13257] to-[#78377e] text-white font-semibold text-xs shadow-lg hover:scale-105 transition-transform"
+            className="w-full sm:w-auto shrink-0 inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-2xl bg-gradient-to-r from-[#ff6b35] via-[#b13257] to-[#78377e] text-white font-semibold text-xs shadow-lg hover:scale-105 transition-transform"
           >
             <span>Démarrer un projet</span>
             <IconArrowRight className="w-3.5 h-3.5" />

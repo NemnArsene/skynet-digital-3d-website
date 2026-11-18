@@ -9,10 +9,12 @@ import {
   IconHeart,
   IconMessage,
   IconPlay,
+  IconFacebook,
+  IconWhatsapp,
 } from "./Icons";
 
 interface VerticalDockProps {
-  onOpenShowreel: () => void;
+  onOpenShowreel?: () => void;
 }
 
 export default function VerticalDock({ onOpenShowreel }: VerticalDockProps) {
@@ -29,10 +31,10 @@ export default function VerticalDock({ onOpenShowreel }: VerticalDockProps) {
   return (
     <aside
       aria-label="Navigation latérale"
-      className="hidden lg:flex flex-col items-center justify-between py-6 px-2.5 rounded-full glass-panel border border-white/12 shadow-[0_20px_50px_rgba(0,0,0,0.6)] w-[68px] h-[540px] z-20 shrink-0 self-center backdrop-blur-2xl"
+      className="hidden lg:flex flex-col items-center justify-between py-4 px-2 rounded-full bg-white/90 backdrop-blur-2xl border border-[#0f172a]/10 shadow-[0_20px_50px_rgba(0,0,0,0.14)] w-[64px] h-full z-30 shrink-0 select-none"
     >
-      {/* Groupe de navigation du haut */}
-      <div className="flex flex-col items-center gap-3 w-full">
+      {/* 1. Groupe Navigation Supérieur */}
+      <div className="flex flex-col items-center gap-2 w-full">
         {navItems.map((item) => {
           const Icon = item.icon;
           const isActive = activeTab === item.id;
@@ -40,16 +42,17 @@ export default function VerticalDock({ onOpenShowreel }: VerticalDockProps) {
             <button
               key={item.id}
               onClick={() => setActiveTab(item.id)}
-              title={item.label}
-              className={`relative group w-11 h-11 rounded-full flex items-center justify-center transition-all duration-300 ${isActive
-                  ? "bg-[#161226] text-white border border-white/25 shadow-[0_0_20px_rgba(177,50,87,0.5)]"
-                  : "text-white/60 hover:text-white hover:bg-white/10"
-                }`}
+              className={`relative group w-10 h-10 rounded-full flex items-center justify-center transition-all duration-300 ${
+                isActive
+                  ? "bg-[#0f172a] text-white shadow-md scale-105"
+                  : "text-[#475569] hover:text-[#0f172a] hover:bg-[#0f172a]/5"
+              }`}
+              aria-label={item.label}
             >
               <Icon className="w-[18px] h-[18px] transition-transform group-hover:scale-110" />
 
-              {/* Info-bulle au survol */}
-              <span className="pointer-events-none absolute left-full ml-3 px-2.5 py-1 rounded-md text-xs font-medium bg-[#13111f] text-white border border-white/15 opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap shadow-xl z-50">
+              {/* Info-bulle flottante au-dessus */}
+              <span className="pointer-events-none absolute left-full ml-3 top-1/2 -translate-y-1/2 px-2.5 py-1 rounded-lg text-xs font-semibold bg-[#0f172a] text-white shadow-2xl opacity-0 group-hover:opacity-100 transition-all duration-200 whitespace-nowrap z-50">
                 {item.label}
               </span>
             </button>
@@ -57,40 +60,60 @@ export default function VerticalDock({ onOpenShowreel }: VerticalDockProps) {
         })}
       </div>
 
-      {/* Profil central / Logo officiel */}
-      <div className="relative group my-auto">
-        <div className="w-11 h-11 rounded-full p-[2px] bg-gradient-to-tr from-[#b13257] via-[#78377e] to-[#3341ab] shadow-[0_0_20px_rgba(177,50,87,0.45)]">
-          <div className="w-full h-full rounded-full overflow-hidden bg-white relative p-0.5 flex items-center justify-center">
-            <Image
-              src="/brand/logo-s-ribbon.png"
-              alt="Skynet Digital"
-              width={40}
-              height={40}
-              className="w-full h-full object-contain"
-            />
+      {/* 2. Centre & Bas : Profil Officiel Skynet & Réseaux Sociaux */}
+      <div className="flex flex-col items-center gap-2.5 pt-3 border-t border-slate-200/60 w-full">
+        {/* Logo Ruban 3D Skynet Digital avec pastille active */}
+        <div className="relative group">
+          <div className="w-10 h-10 rounded-full p-[2px] bg-gradient-to-tr from-[#b13257] via-[#78377e] to-[#3341ab] shadow-[0_0_15px_rgba(177,50,87,0.35)] cursor-pointer">
+            <div className="w-full h-full rounded-full overflow-hidden bg-white relative p-0.5 flex items-center justify-center">
+              <Image
+                src="/brand/logo-s-ribbon.png"
+                alt="Skynet Digital"
+                width={36}
+                height={36}
+                className="w-full h-full object-contain"
+              />
+            </div>
           </div>
+          <span className="absolute bottom-0 right-0 w-2.5 h-2.5 rounded-full bg-emerald-500 border-2 border-white shadow-sm" />
+          <span className="pointer-events-none absolute left-full ml-3 top-1/2 -translate-y-1/2 px-2.5 py-1 rounded-lg text-xs font-semibold bg-[#0f172a] text-white shadow-2xl opacity-0 group-hover:opacity-100 transition-all duration-200 whitespace-nowrap z-50">
+            Skynet Digital · Agence Créative
+          </span>
         </div>
-        {/* Point vert actif */}
-        <span className="absolute bottom-0 right-0 w-3 h-3 rounded-full bg-emerald-400 border-2 border-[#0a0714] shadow-[0_0_8px_#34d399]" />
-        <span className="pointer-events-none absolute left-full ml-3 px-2.5 py-1 rounded-md text-xs font-medium bg-[#13111f] text-white border border-white/15 opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap shadow-xl z-50">
-          Skynet Digital · Paris &amp; Douala
-        </span>
-      </div>
 
-      {/* Déclencheur Showreel en bas */}
-      <div className="flex flex-col items-center gap-1.5 w-full">
-        <button
-          onClick={onOpenShowreel}
-          title="Découvrir la vidéo Skynet Digital"
-          className="group w-11 h-11 rounded-full bg-white/5 hover:bg-white/15 border border-white/12 flex items-center justify-center text-white transition-all duration-300 hover:scale-105 hover:border-white/30"
-        >
-          <div className="w-7 h-7 rounded-full bg-white/10 group-hover:bg-[#b13257] flex items-center justify-center transition-colors">
-            <IconPlay className="w-3 h-3 text-white fill-white ml-0.5" />
-          </div>
-        </button>
-        <span className="text-[10px] uppercase font-semibold tracking-wider text-white/50 group-hover:text-white/80 transition-colors">
-          Showreel
-        </span>
+        {/* Facebook Link */}
+        <div className="relative group">
+          <a
+            href="https://facebook.com/skynetdigital.isroot.in"
+            target="_blank"
+            rel="noopener noreferrer"
+            title="Page Facebook Skynet Digital"
+            className="w-9 h-9 rounded-full flex items-center justify-center text-[#1877f2] bg-[#1877f2]/10 hover:bg-[#1877f2] hover:text-white transition-all duration-300 shadow-sm"
+            aria-label="Facebook Skynet Digital"
+          >
+            <IconFacebook className="w-4 h-4" />
+          </a>
+          <span className="pointer-events-none absolute left-full ml-3 top-1/2 -translate-y-1/2 px-2.5 py-1 rounded-lg text-xs font-semibold bg-[#0f172a] text-white shadow-2xl opacity-0 group-hover:opacity-100 transition-all duration-200 whitespace-nowrap z-50">
+            Facebook · Skynet Digital
+          </span>
+        </div>
+
+        {/* WhatsApp Link */}
+        <div className="relative group">
+          <a
+            href="https://wa.me/23764175399"
+            target="_blank"
+            rel="noopener noreferrer"
+            title="WhatsApp direct Skynet Digital"
+            className="w-9 h-9 rounded-full flex items-center justify-center text-[#25d366] bg-[#25d366]/10 hover:bg-[#25d366] hover:text-white transition-all duration-300 shadow-sm"
+            aria-label="WhatsApp Skynet Digital"
+          >
+            <IconWhatsapp className="w-4 h-4" />
+          </a>
+          <span className="pointer-events-none absolute left-full ml-3 top-1/2 -translate-y-1/2 px-2.5 py-1 rounded-lg text-xs font-semibold bg-[#0f172a] text-white shadow-2xl opacity-0 group-hover:opacity-100 transition-all duration-200 whitespace-nowrap z-50">
+            WhatsApp Direct (+237 641 753 99)
+          </span>
+        </div>
       </div>
     </aside>
   );
