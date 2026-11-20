@@ -159,7 +159,7 @@ export default function ServicesSection({ onSelectService }: ServicesSectionProp
 
   return (
     <section id="services" className="relative w-full bg-white text-[#0f172a] overflow-hidden selection:bg-[#b13257]/20 selection:text-[#0f172a]">
-      
+
       {/* ======================================================== */}
       {/* 1. CINEMATIC TITLE SLIDE (Diaporama plein écran)          */}
       {/* ======================================================== */}
@@ -184,7 +184,7 @@ export default function ServicesSection({ onSelectService }: ServicesSectionProp
       {/* 2. CINEMATIC CONTENT ARRIVAL (Parallax & Éléments interactifs) */}
       {/* ======================================================== */}
       <div className="relative py-20 sm:py-28 px-4 sm:px-6 lg:px-12 xl:px-16 max-w-7xl mx-auto">
-        
+
         {/* Strip des 7 Pôles (Boutons interactifs haute lisibilité) */}
         <div className="flex items-center justify-start md:justify-center gap-2 overflow-x-auto pb-4 mb-14 scrollbar-none">
           {AGENCY_SERVICES.map((service) => {
@@ -194,11 +194,10 @@ export default function ServicesSection({ onSelectService }: ServicesSectionProp
               <button
                 key={service.id}
                 onClick={() => setActiveTabId(service.id)}
-                className={`group shrink-0 inline-flex items-center gap-2.5 px-4 sm:px-5 py-3 rounded-2xl text-xs sm:text-sm font-semibold transition-all duration-300 border cursor-pointer ${
-                  isActive
-                    ? "bg-[#0f172a] text-white border-[#0f172a] shadow-[0_10px_25px_rgba(15,23,42,0.25)] scale-105"
-                    : "bg-slate-100 hover:bg-slate-200/80 text-[#334155] hover:text-[#0f172a] border-slate-200"
-                }`}
+                className={`group shrink-0 inline-flex items-center gap-2.5 px-4 sm:px-5 py-3 rounded-2xl text-xs sm:text-sm font-semibold transition-all duration-300 border cursor-pointer ${isActive
+                  ? "bg-[#0f172a] text-white border-[#0f172a] shadow-[0_10px_25px_rgba(15,23,42,0.25)] scale-105"
+                  : "bg-slate-100 hover:bg-slate-200/80 text-[#334155] hover:text-[#0f172a] border-slate-200"
+                  }`}
               >
                 <span className={`font-mono text-xs font-bold ${isActive ? "text-[#f3c1d4]" : "text-[#64748b]"}`}>
                   {service.num}
@@ -213,7 +212,7 @@ export default function ServicesSection({ onSelectService }: ServicesSectionProp
         {/* Grand Spotlight Card sur le service sélectionné (Fond Blanc & Éléments Parallax) */}
         <div className="relative rounded-[32px] bg-white border border-slate-200/90 p-6 sm:p-10 lg:p-12 shadow-[0_25px_70px_rgba(15,23,42,0.08)] mb-20 transition-all duration-500">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
-            
+
             {/* Colonne Gauche : Description détaillée & Livrables */}
             <div className="lg:col-span-7 flex flex-col gap-6">
               <div className="flex items-center gap-3">

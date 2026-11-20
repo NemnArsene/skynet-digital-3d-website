@@ -63,15 +63,14 @@ export default function SiteLoader({ onLoaded }: SiteLoaderProps) {
   return (
     <div
       role="status"
-      aria-label="Chargement plein écran 4K Skynet Digital"
-      className={`fixed inset-0 z-[100] bg-black flex items-center justify-center overflow-hidden transition-opacity duration-700 isolate ${
-        progress >= 100 ? "opacity-0 pointer-events-none" : "opacity-100"
-      }`}
+      aria-label="Chargement plein écran 8K Skynet Digital"
+      className={`fixed inset-0 z-[100] bg-black flex items-center justify-center overflow-hidden transition-opacity duration-700 isolate ${progress >= 100 ? "opacity-0 pointer-events-none" : "opacity-100"
+        }`}
     >
-      {/* Vidéo 4K (3840x2160) Plein Écran */}
+      {/* Vidéo 8K Plein Écran */}
       <video
         ref={videoRef}
-        src="/frames/laoding/Animated_letter_S_logo_bouncing_4k.mp4"
+        src="/frames/laoding/Animated_letter_S_logo_bouncing_b3cdc857.mp4"
         autoPlay
         muted
         playsInline
@@ -100,7 +99,7 @@ export default function SiteLoader({ onLoaded }: SiteLoaderProps) {
           />
         </div>
         <div className="flex items-center justify-between w-full text-[10px] font-mono tracking-widest text-white/70 uppercase">
-          <span>SKYNET DIGITAL · 4K</span>
+          <span>SKYNET DIGITAL</span>
           <span className="font-bold tabular-nums text-white">{progress}%</span>
         </div>
       </div>

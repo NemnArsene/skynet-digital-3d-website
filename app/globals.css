@@ -47,7 +47,11 @@ body {
   overflow-x: clip;
 }
 
-h1, h2, h3, h4, .font-heading {
+h1,
+h2,
+h3,
+h4,
+.font-heading {
   font-family: var(--font-heading);
   letter-spacing: -0.025em;
   text-wrap: balance;
@@ -114,13 +118,29 @@ h1, h2, h3, h4, .font-heading {
 
 /* Animations */
 @keyframes pulseSubtle {
-  0%, 100% { opacity: 0.35; transform: scale(1); }
-  50% { opacity: 0.55; transform: scale(1.04); }
+
+  0%,
+  100% {
+    opacity: 0.35;
+    transform: scale(1);
+  }
+
+  50% {
+    opacity: 0.55;
+    transform: scale(1.04);
+  }
 }
 
 @keyframes floatGentle {
-  0%, 100% { transform: translateY(0px); }
-  50% { transform: translateY(-6px); }
+
+  0%,
+  100% {
+    transform: translateY(0px);
+  }
+
+  50% {
+    transform: translateY(-6px);
+  }
 }
 
 /* Slide in animations like slides */
@@ -129,6 +149,7 @@ h1, h2, h3, h4, .font-heading {
     opacity: 0;
     transform: translateY(32px);
   }
+
   100% {
     opacity: 1;
     transform: translateY(0);
@@ -140,6 +161,7 @@ h1, h2, h3, h4, .font-heading {
     opacity: 0;
     transform: translateX(-32px);
   }
+
   100% {
     opacity: 1;
     transform: translateX(0);
@@ -151,6 +173,7 @@ h1, h2, h3, h4, .font-heading {
     opacity: 0;
     transform: translateX(32px);
   }
+
   100% {
     opacity: 1;
     transform: translateX(0);

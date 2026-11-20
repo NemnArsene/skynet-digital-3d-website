@@ -161,8 +161,8 @@ function HeroContent() {
                 key={link.id}
                 onClick={() => handleNavClick(link.id, link.targetId)}
                 className={`px-3.5 lg:px-5 py-1.5 rounded-full text-xs sm:text-sm font-semibold transition-all duration-300 ${isActive
-                    ? "bg-[#0f172a] text-white shadow-sm"
-                    : "text-[#334155] hover:text-[#0f172a] hover:bg-[#0f172a]/5"
+                  ? "bg-[#0f172a] text-white shadow-sm"
+                  : "text-[#334155] hover:text-[#0f172a] hover:bg-[#0f172a]/5"
                   }`}
               >
                 {link.label}
@@ -219,8 +219,8 @@ function HeroContent() {
             {/* Calque de glissement de couleur officiel de gauche vers la droite */}
             <span
               className={`absolute inset-0 bg-gradient-to-r from-[#ff6b35] via-[#b13257] to-[#78377e] transition-transform duration-400 ease-out pointer-events-none ${isCtaAnimating
-                  ? "translate-x-0 opacity-100"
-                  : "-translate-x-full opacity-0 group-hover:translate-x-0 group-hover:opacity-100"
+                ? "translate-x-0 opacity-100"
+                : "-translate-x-full opacity-0 group-hover:translate-x-0 group-hover:opacity-100"
                 }`}
             />
 
@@ -236,9 +236,8 @@ function HeroContent() {
 
       {/* Navigation Latérale (Vertical Dock) - FIXE sur la GAUCHE */}
       <div
-        className={`hidden lg:block absolute left-3 sm:left-6 lg:left-8 xl:left-12 top-[100px] xl:top-[110px] bottom-[30px] z-50 pointer-events-auto transition-all duration-700 delay-150 ease-out ${
-          isIntroReady ? "translate-x-0 opacity-100" : "-translate-x-16 opacity-0 pointer-events-none"
-        }`}
+        className={`hidden lg:block absolute left-3 sm:left-6 lg:left-8 xl:left-12 top-[100px] xl:top-[110px] bottom-[30px] z-50 pointer-events-auto transition-all duration-700 delay-150 ease-out ${isIntroReady ? "translate-x-0 opacity-100" : "-translate-x-16 opacity-0 pointer-events-none"
+          }`}
       >
         <VerticalDock
           activeSectionId={activeNavTab}
@@ -315,8 +314,8 @@ function HeroContent() {
               {/* Slide overlay */}
               <span
                 className={`absolute inset-0 bg-gradient-to-r from-[#ff6b35] via-[#b13257] to-[#78377e] transition-transform duration-400 ease-out pointer-events-none ${isCtaAnimating
-                    ? "translate-x-0 opacity-100"
-                    : "-translate-x-full opacity-0 group-hover:translate-x-0 group-hover:opacity-100"
+                  ? "translate-x-0 opacity-100"
+                  : "-translate-x-full opacity-0 group-hover:translate-x-0 group-hover:opacity-100"
                   }`}
               />
               <span className="relative z-10">Parlons de votre projet</span>

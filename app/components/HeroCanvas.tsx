@@ -80,7 +80,7 @@ export default function HeroCanvas({ frames, children }: HeroCanvasProps) {
     if (!canvas) return;
 
     const rect = canvas.getBoundingClientRect();
-    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    const dpr = Math.min(window.devicePixelRatio || 1, 2.5);
 
     const clientW = rect.width || window.innerWidth;
     const clientH = rect.height || window.innerHeight;
